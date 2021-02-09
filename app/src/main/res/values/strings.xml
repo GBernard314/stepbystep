@@ -30,4 +30,6 @@
     <string name="nextButton">Swipe right to continue</string>
     <string name="skip">Skip for now</string>
     <string name="namePageTitle">How should we call you?</string>
+    <string name="accountNameFragmentDescription">You can chose whatever name you want.
+    We\'ll keep it between you and us.</string>
 </resources>
