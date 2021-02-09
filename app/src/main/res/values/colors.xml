@@ -10,4 +10,5 @@
     <color name="cal_pink">#FF0062</color>
     <color name="step_blue">#005AFF</color>
     <color name="activity_yellow">#FFBD00</color>
+    <color name="background_grey">#f7f7f7</color>
 </resources>
