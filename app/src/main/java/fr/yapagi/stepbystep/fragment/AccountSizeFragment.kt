@@ -29,7 +29,7 @@ class AccountSizeFragment : Fragment() {
         picker.setWheelItemCount(5)
         picker.setSelectedTextColor(R.color.colorAccent)
         picker.setUnselectedTextColor(R.color.color_26_gray)
-        picker.scrollTo(30)
+        picker.scrollTo(140)
         picker.setAdapter(PickerAdapter())
         super.onViewCreated(view, savedInstanceState)
     }
