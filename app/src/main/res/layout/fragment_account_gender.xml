@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.AccountGenderFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/accountGenderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/accountGenderTitle"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/accountGenderDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="64dp"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/accountGenderDescription"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/accountGenderTitle" />
+
+        <Button
+            android:id="@+id/maleButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="128dp"
+            android:layout_marginEnd="64dp"
+            android:backgroundTint="#FDFDFD"
+            android:text="@string/male"
+            android:textColor="#606060"
+            app:icon="@drawable/ic_baseline_api_24"
+            app:iconGravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/accountGenderDescription" />
+
+        <Button
+            android:id="@+id/femaleButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="64dp"
+            android:backgroundTint="#FDFDFD"
+            android:text="@string/female"
+            android:textColor="#606060"
+            app:icon="@drawable/ic_baseline_api_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/maleButton" />
+
+        <Button
+            android:id="@+id/noBinaryButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="64dp"
+            android:backgroundTint="#FDFDFD"
+            android:text="@string/noBinary"
+            android:textColor="#606060"
+            app:icon="@drawable/ic_baseline_api_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/femaleButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

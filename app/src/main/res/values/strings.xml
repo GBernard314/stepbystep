@@ -32,4 +32,11 @@
     <string name="namePageTitle">How should we call you?</string>
     <string name="accountNameFragmentDescription">You can chose whatever name you want.
     We\'ll keep it between you and us.</string>
+    <string name="accountGenderTitle"> How do you identify yourself? </string>
+    <string name="accountGenderDescription">We ask this to make sure your journey is fun,
+    healthy, and balanced.</string>
+
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="noBinary">Non-Binary</string>
 </resources>
