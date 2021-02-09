@@ -38,7 +38,7 @@
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:elevation="10dp"
+        android:elevation="4dp"
         app:cardCornerRadius="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -48,7 +48,7 @@
             android:id="@+id/userPic"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            tools:srcCompat="@drawable/ic_launcher_background" />
+            card_view:srcCompat="@drawable/ic_launcher_background" />
     </androidx.cardview.widget.CardView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,6 +57,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="102dp"
         android:layout_marginBottom="48dp"
+        android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -73,10 +74,10 @@
             android:layout_marginEnd="8dp"
             app:cardBackgroundColor="#fff"
             app:cardCornerRadius="24dp"
-            card_view:cardElevation="8dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline10"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            card_view:cardElevation="4dp">
 
             <TextView
                 android:id="@+id/card1Text"
@@ -87,12 +88,13 @@
 
             <ImageView
                 android:id="@+id/imageView8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/btn_dialog"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="right"
+                android:paddingTop="10dp"
                 android:paddingRight="16dp"
-                android:paddingTop="10dp"/>
+                card_view:srcCompat="@drawable/step"
+                card_view:tint="@color/step_blue" />
 
 
         </androidx.cardview.widget.CardView>
@@ -106,10 +108,10 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             app:cardCornerRadius="24dp"
-            card_view:cardElevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline10"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            card_view:cardElevation="4dp">
 
             <TextView
                 android:id="@+id/card2Text"
@@ -122,10 +124,10 @@
                 android:id="@+id/imageView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/btn_dialog"
                 android:layout_gravity="right"
+                android:paddingTop="10dp"
                 android:paddingRight="16dp"
-                android:paddingTop="10dp"/>
+                app:srcCompat="@android:drawable/btn_dialog" />
 
 
         </androidx.cardview.widget.CardView>
@@ -139,13 +141,13 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="24dp"
-            card_view:cardElevation="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline10"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView5"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintVertical_bias="0.0"
+            card_view:cardElevation="4dp">
 
             <TextView
                 android:id="@+id/card3Text"
@@ -157,12 +159,13 @@
 
             <ImageView
                 android:id="@+id/imageView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/btn_dialog"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="right"
+                android:paddingTop="10dp"
                 android:paddingRight="16dp"
-                android:paddingTop="10dp"/>
+                card_view:srcCompat="@drawable/flash"
+                card_view:tint="@color/activity_yellow" />
 
         </androidx.cardview.widget.CardView>
 
@@ -181,13 +184,13 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="24dp"
-            card_view:cardElevation="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline10"
             app:layout_constraintTop_toBottomOf="@+id/cardView6"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintVertical_bias="1.0"
+            card_view:cardElevation="4dp">
 
             <TextView
                 android:id="@+id/card4Text"
@@ -198,12 +201,13 @@
 
             <ImageView
                 android:id="@+id/imageView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/btn_dialog"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="right"
+                android:paddingTop="10dp"
                 android:paddingRight="16dp"
-                android:paddingTop="10dp"/>
+                card_view:srcCompat="@drawable/fire"
+                card_view:tint="@color/cal_pink" />
 
         </androidx.cardview.widget.CardView>
 

@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="cal_pink">#FF0062</color>
+    <color name="step_blue">#005AFF</color>
+    <color name="activity_yellow">#FFBD00</color>
 </resources>
