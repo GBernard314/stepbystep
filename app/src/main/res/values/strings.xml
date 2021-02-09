@@ -75,3 +75,13 @@
 
 
 </resources>
+    
+    <!-- Register page -->
+    <string name="registration">Inscription</string>
+    <string name="first_name">Prénom</string>
+    <string name="last_name">Nom</string>
+    <string name="email">E-mail</string>
+    <string name="password">Mot de passe</string>
+    <string name="register">S&#39;inscrire</string>
+    <string name="login">Vous avez déja un compte</string>
+</resources>
