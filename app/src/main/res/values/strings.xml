@@ -25,4 +25,9 @@
     <string name="activitytime">ActivityTime</string>
     <string name="mapbox_access_token">pk.eyJ1IjoicGVyaWZhbm9zIiwiYSI6ImNrbGllZ3MxajBjYW8ycG5tZHB2dWZmeXQifQ.xbzRZtNIxQsHyrySdBdCig</string>
     <string name="o">O</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="landingTitle">Amazing, let\'s begin ! </string>
+    <string name="nextButton">Swipe right to continue</string>
+    <string name="skip">Skip for now</string>
+    <string name="namePageTitle">How should we call you?</string>
 </resources>

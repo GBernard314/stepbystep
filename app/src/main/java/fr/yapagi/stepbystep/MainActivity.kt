@@ -5,11 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.FirebaseApp
 import fr.yapagi.stepbystep.network.Authenticator
+import fr.yapagi.stepbystep.adapter.AccountActivityAdapter
+import fr.yapagi.stepbystep.databinding.ActivityAccountBinding
 
+private lateinit var binding : ActivityAccountBinding
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        
+        binding = ActivityAccountBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         //Firebase stuff starts here
         FirebaseApp.initializeApp(this)

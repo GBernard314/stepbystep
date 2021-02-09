@@ -26,6 +26,7 @@
             android:label="@string/title_activity_path_finder" />
         <activity android:name=".DashboardActivity" />
         <activity android:name=".timer.TimerActivity" />
+        <activity android:name=".AccountActivity">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
