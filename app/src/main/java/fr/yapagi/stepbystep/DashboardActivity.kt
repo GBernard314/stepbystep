@@ -13,6 +13,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.github.mikephil.charting.utils.MPPointF
+import fr.yapagi.stepbystep.path_finder.PathFinderActivity
 import fr.yapagi.stepbystep.timer.TimerActivity
 
 
@@ -22,7 +23,6 @@ class DashboardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dashboard)
         val pieChart = findViewById<PieChart>(R.id.chart)
         val NoOfEmp = ArrayList<PieEntry>()
-
 
         val walked = 5000.toFloat()
         val goal = (15000 - walked)
@@ -54,9 +54,15 @@ class DashboardActivity : AppCompatActivity() {
         pieChart.animateXY(1000, 1000)
 
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TMP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        val tmpMap = findViewById<CardView>(R.id.cardView6)
-        tmpMap.setOnClickListener{
+        val tmpTimer = findViewById<CardView>(R.id.cardView6)
+        tmpTimer.setOnClickListener{
             val intent = Intent(this, TimerActivity::class.java)
+            startActivity(intent)
+        }
+
+        val tmpMap = findViewById<CardView>(R.id.cardView5)
+        tmpMap.setOnClickListener{
+            val intent = Intent(this, PathFinderActivity::class.java)
             startActivity(intent)
         }
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TMP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
