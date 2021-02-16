@@ -1,9 +1,11 @@
 package fr.yapagi.stepbystep
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.PieData
@@ -11,6 +13,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.github.mikephil.charting.utils.MPPointF
+import fr.yapagi.stepbystep.timer.TimerActivity
 
 
 class DashboardActivity : AppCompatActivity() {
@@ -49,5 +52,13 @@ class DashboardActivity : AppCompatActivity() {
         pieChart.highlightValues(null)
         pieChart.invalidate()
         pieChart.animateXY(1000, 1000)
+
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TMP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        val tmpMap = findViewById<CardView>(R.id.cardView6)
+        tmpMap.setOnClickListener{
+            val intent = Intent(this, TimerActivity::class.java)
+            startActivity(intent)
+        }
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TMP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     }
 }
