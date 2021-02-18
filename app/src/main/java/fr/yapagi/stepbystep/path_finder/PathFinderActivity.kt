@@ -1,44 +1,63 @@
 package fr.yapagi.stepbystep.path_finder
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.BuildConfig
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import fr.yapagi.stepbystep.databinding.ActivityPathFinderBinding
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.config.Configuration
 
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import fr.yapagi.stepbystep.R
 
-class PathFinderActivity : AppCompatActivity(), OnMapReadyCallback {
-
-    private lateinit var mMap: GoogleMap
+class PathFinderActivity : AppCompatActivity() {
+    lateinit var binding : ActivityPathFinderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_path_finder)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        binding = ActivityPathFinderBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+    override fun onResume() {
+        super.onResume()
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        binding.mapView.setBuiltInZoomControls(true);
+        binding.mapView.setMultiTouchControls(true);
+
+        binding.mapView.controller.setZoom(8);
+        binding.mapView.setTileSource(TileSourceFactory.MAPNIK)
+        val point = GeoPoint(51, 0);  // London, UK
+        binding.mapView.controller.setCenter(point);
+    }
+
+
+
+    private fun createRequest() {
+
+
+        val queue = Volley.newRequestQueue(this)
+        val coordinate = "13.388860,52.517037;13.397634,52.529407;13.428555,52.523219"
+        val tab = arrayOf( arrayOf(8.681495F, 49.41461F), arrayOf(8.686507F, 49.41943F), arrayOf(8.687872F, 49.420318F) )
+        val url = "https://router.project-osrm.org/route/v1/driving/$coordinate?overview=false"
+
+        val request = StringRequest(
+                Request.Method.GET,
+                url,
+                Response.Listener<String> { response ->
+                    Log.d("maps", response)
+                },
+                Response.ErrorListener { error ->
+                    Log.d("maps", error.message.toString())
+                }
+        )
+
+        queue.add(request)
     }
 }

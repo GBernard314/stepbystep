@@ -60,7 +60,7 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val tmpMap = findViewById<CardView>(R.id.cardView5)
+        val tmpMap = findViewById<CardView>(R.id.activity)
         tmpMap.setOnClickListener{
             val intent = Intent(this, PathFinderActivity::class.java)
             startActivity(intent)
