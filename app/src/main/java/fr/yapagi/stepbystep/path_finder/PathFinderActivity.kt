@@ -18,6 +18,8 @@ import fr.yapagi.stepbystep.databinding.ActivityPathFinderBinding
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.TilesOverlay
 
 
 class PathFinderActivity : AppCompatActivity() {
@@ -32,8 +34,6 @@ class PathFinderActivity : AppCompatActivity() {
 
         //Application ID needed for map API (Open Street Map)
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
-
-        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>PERMISSION TEST>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     }
 
 
@@ -42,14 +42,28 @@ class PathFinderActivity : AppCompatActivity() {
         super.onResume()
 
         //1) Init map view
-        binding.mapView.setBuiltInZoomControls(true);           //Zoom controls
-        binding.mapView.setMultiTouchControls(true);            //Multi touch controls
-        binding.mapView.controller.setZoom(4);                  //Zoom (without = mosaïque)
-        binding.mapView.setTileSource(TileSourceFactory.MAPNIK) //Map view source
+        binding.mapView.setBuiltInZoomControls(true)                                           //Zoom settings
+        binding.mapView.setMultiTouchControls(true)
+        binding.mapView.controller.setZoom(4)
+        binding.mapView.minZoomLevel = 3.0
+        binding.mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)                   //Tile save
+        binding.mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) //Map colors
+        binding.mapView.isHorizontalMapRepetitionEnabled = false                               //Map view lock (no mosaic)
+        binding.mapView.isVerticalMapRepetitionEnabled = false
+        binding.mapView.setScrollableAreaLimitLatitude(
+                MapView.getTileSystem().maxLatitude,
+                MapView.getTileSystem().minLatitude,
+                0
+        );
+        binding.mapView.setScrollableAreaLimitLongitude(
+                MapView.getTileSystem().minLongitude,
+                MapView.getTileSystem().maxLongitude,
+                0
+        )
 
         //2) Set test point
-        val point = GeoPoint(51, 0);    //London, UK
-        binding.mapView.controller.setCenter(point);
+        val point = GeoPoint(51, 0)    //London, UK
+        binding.mapView.controller.setCenter(point)
 
         //3) Access map if permission granted && service enable
         if(isAccessAuthorized()){
