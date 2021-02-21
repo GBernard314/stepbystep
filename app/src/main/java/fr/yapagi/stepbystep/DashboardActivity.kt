@@ -1,19 +1,15 @@
 package fr.yapagi.stepbystep
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.utils.ColorTemplate
-import com.github.mikephil.charting.utils.MPPointF
-import fr.yapagi.stepbystep.path_finder.PathFinderActivity
+import fr.yapagi.stepbystep.map.MapActivity
 import fr.yapagi.stepbystep.timer.TimerActivity
 
 
@@ -62,7 +58,7 @@ class DashboardActivity : AppCompatActivity() {
 
         val tmpMap = findViewById<CardView>(R.id.activity)
         tmpMap.setOnClickListener{
-            val intent = Intent(this, PathFinderActivity::class.java)
+            val intent = Intent(this, MapActivity::class.java)
             startActivity(intent)
         }
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TMP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

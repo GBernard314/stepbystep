@@ -5,4 +5,6 @@
     <string name="timer_stop">||</string>
     <string name="timer_restart">O</string>
     <string name="title_activity_path_finder">Map</string>
+    <string name="reload">Reload</string>
+    <string name="image_hiding_map_view">Image hiding map view</string>
 </resources>

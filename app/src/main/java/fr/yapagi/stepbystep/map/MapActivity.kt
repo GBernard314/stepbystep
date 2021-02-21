@@ -1,4 +1,4 @@
-package fr.yapagi.stepbystep.path_finder
+package fr.yapagi.stepbystep.map
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -11,31 +11,37 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.android.volley.BuildConfig
-import fr.yapagi.stepbystep.databinding.ActivityPathFinderBinding
+import fr.yapagi.stepbystep.databinding.ActivityMapBinding
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.TilesOverlay
 
+@Suppress("DEPRECATION")
+class MapActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMapBinding
 
-class PathFinderActivity : AppCompatActivity(), LocationListener {
-    lateinit var binding : ActivityPathFinderBinding
+    //PROVIDERS
     private lateinit var locationManager:   LocationManager
     private lateinit var connectionManager: ConnectivityManager
     private lateinit var wifiManager:       WifiManager
-    private lateinit var currentLocation:   Location
-    private var isFollowingEnable:          Boolean = false
+
+    //MAP LOCATION
+    private var isFollowingEnable: Boolean = false
+    private var isMapReady:        Boolean = false
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPathFinderBinding.inflate(layoutInflater)
+        binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         //Application ID needed for map API (Open Street Map)
@@ -46,11 +52,25 @@ class PathFinderActivity : AppCompatActivity(), LocationListener {
             isFollowingEnable = !isFollowingEnable
             if(isFollowingEnable){
                 binding.pfBtnCurrentLocation.text = "O"
-                binding.mapView.controller.setZoom(17)
+                binding.mapView.controller.setZoom(20)
                 followUser()
             }
             else{
                 binding.pfBtnCurrentLocation.text = "X"
+            }
+        }
+        binding.pfBtnReload.setOnClickListener {
+            //Check for providers
+            if(isGPSEnable()){
+                binding.pfBtnReload.visibility = View.GONE
+                binding.pfBtnCurrentLocation.visibility = View.VISIBLE
+                binding.pfHideView.visibility = View.GONE
+
+                enableAutoRequestLocation()
+            }
+            else
+            {
+                waitForGPS()
             }
         }
     }
@@ -61,48 +81,41 @@ class PathFinderActivity : AppCompatActivity(), LocationListener {
     override fun onResume() {
         super.onResume()
 
-        initMapSettings() //Colors, position, bound, repetition...
-
-        //1) Access map if permission granted && service enable
-        if(isAccessAuthorized()){
-            Toast.makeText(this,"OK", Toast.LENGTH_SHORT).show()
-        }
-
-        //2) Enable location update
-        locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                0,
-                0F,
-                this
-        )
+        initMapSettings() //Permission, providers, colors, position, bound, repetition...
     }
 
 
 
     //MAP LOCATION//
-    override fun onLocationChanged(location: Location) {
-        Log.d("maps", "update Latitude:" + location.latitude + ", Longitude:" + location.longitude)
-        currentLocation = location
-
-        if(isFollowingEnable){
-            followUser()
-        }
-    } //Update currentLocation each movement detected
     private fun followUser(){
-        val point = GeoPoint(currentLocation.latitude, currentLocation.longitude)
+        //1) Set point & center view on it
+        val point = GeoPoint(getCurrentLocation()[0], getCurrentLocation()[1]) //Lat, Long
         binding.mapView.controller.setCenter(point)
-    }                            //Center & zoom map view on current user location
+
+        //2) Generate marker
+        val marker = Marker(binding.mapView)
+        marker.position = point
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        binding.mapView.overlays.add(marker)
+    } //Center & Zoom in on current user location
 
 
 
     //MAP SETTINGS (PERMISSION/NETWORK/GPS)//
     private fun initMapSettings(){
+
         //1) Init map providers
         locationManager   = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         connectionManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         wifiManager       = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
-        //2) Init map settings
+        //2) Check for permissions granted & providers enable
+        isMapReady = isAccessAuthorized()
+
+        //3) Enable location update
+        enableAutoRequestLocation()
+
+        //4) Init map default settings
         binding.mapView.setBuiltInZoomControls(true)                                           //Zoom settings
         binding.mapView.setMultiTouchControls(true)
         binding.mapView.controller.setZoom(4)
@@ -115,13 +128,35 @@ class PathFinderActivity : AppCompatActivity(), LocationListener {
                 MapView.getTileSystem().maxLatitude,
                 MapView.getTileSystem().minLatitude,
                 0
-        );
+        )
         binding.mapView.setScrollableAreaLimitLongitude(
                 MapView.getTileSystem().minLongitude,
                 MapView.getTileSystem().maxLongitude,
                 0
         )
     }               //Init map providers & settings
+    @SuppressLint("MissingPermission")
+    private fun enableAutoRequestLocation(){
+        locationManager.requestLocationUpdates(
+            LocationManager.NETWORK_PROVIDER,
+            0,
+            0F,
+            object : LocationListener {
+                override fun onProviderDisabled(provider: String) {
+                    locationManager.removeUpdates(this)
+                    waitForGPS()
+                }  //Call in first if providers disable
+                override fun onLocationChanged(location: Location) {
+                    Log.d("maps", "update Latitude:" + location.latitude + ", Longitude:" + location.longitude)
+                    currentLocation = location
+
+                    if(isFollowingEnable){
+                        followUser()
+                    }
+                } //Update currentLocation each movement detected
+            }
+        )
+    }     //Get location each time the user move
     private fun isAccessAuthorized(): Boolean {
         //1) Check permissions
         if(!isPermissionGranted() && !askForPermissions()){ //First time -> Ask user
@@ -187,11 +222,17 @@ class PathFinderActivity : AppCompatActivity(), LocationListener {
         ) //Permission list
 
         //Ask user
-        ActivityCompat.requestPermissions(this, permissions,1);
+        ActivityCompat.requestPermissions(this, permissions,1)
         Log.d("maps", "Permissions ask")
 
         return isPermissionGranted() //Granted -> True / Denied -> False
     }   //Ask user for permissions
+    private fun waitForGPS(){
+        binding.pfBtnReload.visibility = View.VISIBLE
+        binding.pfBtnCurrentLocation.visibility = View.GONE
+        binding.pfHideView.visibility = View.VISIBLE
+    }
+
 
 
 
@@ -215,4 +256,13 @@ class PathFinderActivity : AppCompatActivity(), LocationListener {
 
         queue.add(request)
     }*/
+
+
+    companion object{
+        private var currentLocation = Location("")
+
+        fun getCurrentLocation(): DoubleArray {
+            return arrayOf(currentLocation.latitude, currentLocation.longitude).toDoubleArray()
+        }
+    }
 }

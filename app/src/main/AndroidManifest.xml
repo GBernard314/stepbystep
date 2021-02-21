@@ -23,7 +23,7 @@
         tools:targetApi="m">
 
         <activity
-            android:name=".path_finder.PathFinderActivity"
+            android:name=".map.MapActivity"
             android:label="@string/title_activity_path_finder" />
         <activity android:name=".DashboardActivity" />
         <activity android:name=".timer.TimerActivity" />
