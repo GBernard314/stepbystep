@@ -1,9 +1,11 @@
 package fr.yapagi.stepbystep.path_finder
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
@@ -13,7 +15,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.android.volley.BuildConfig
-import fr.yapagi.stepbystep.DashboardActivity
 import fr.yapagi.stepbystep.databinding.ActivityPathFinderBinding
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -22,8 +23,13 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.TilesOverlay
 
 
-class PathFinderActivity : AppCompatActivity() {
+class PathFinderActivity : AppCompatActivity(), LocationListener {
     lateinit var binding : ActivityPathFinderBinding
+    private lateinit var locationManager:   LocationManager
+    private lateinit var connectionManager: ConnectivityManager
+    private lateinit var wifiManager:       WifiManager
+    private lateinit var currentLocation:   Location
+    private var isFollowingEnable:          Boolean = false
 
 
 
@@ -34,18 +40,73 @@ class PathFinderActivity : AppCompatActivity() {
 
         //Application ID needed for map API (Open Street Map)
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
+
+        //BTN
+        binding.pfBtnCurrentLocation.setOnClickListener {
+            isFollowingEnable = !isFollowingEnable
+            if(isFollowingEnable){
+                binding.pfBtnCurrentLocation.text = "O"
+                binding.mapView.controller.setZoom(17)
+                followUser()
+            }
+            else{
+                binding.pfBtnCurrentLocation.text = "X"
+            }
+        }
     }
 
 
 
+    @SuppressLint("MissingPermission")
     override fun onResume() {
         super.onResume()
 
-        //1) Init map view
+        initMapSettings() //Colors, position, bound, repetition...
+
+        //1) Access map if permission granted && service enable
+        if(isAccessAuthorized()){
+            Toast.makeText(this,"OK", Toast.LENGTH_SHORT).show()
+        }
+
+        //2) Enable location update
+        locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                0,
+                0F,
+                this
+        )
+    }
+
+
+
+    //MAP LOCATION//
+    override fun onLocationChanged(location: Location) {
+        Log.d("maps", "update Latitude:" + location.latitude + ", Longitude:" + location.longitude)
+        currentLocation = location
+
+        if(isFollowingEnable){
+            followUser()
+        }
+    } //Update currentLocation each movement detected
+    private fun followUser(){
+        val point = GeoPoint(currentLocation.latitude, currentLocation.longitude)
+        binding.mapView.controller.setCenter(point)
+    }                            //Center & zoom map view on current user location
+
+
+
+    //MAP SETTINGS (PERMISSION/NETWORK/GPS)//
+    private fun initMapSettings(){
+        //1) Init map providers
+        locationManager   = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        connectionManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        wifiManager       = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+
+        //2) Init map settings
         binding.mapView.setBuiltInZoomControls(true)                                           //Zoom settings
         binding.mapView.setMultiTouchControls(true)
         binding.mapView.controller.setZoom(4)
-        binding.mapView.minZoomLevel = 3.0
+        binding.mapView.minZoomLevel = 4.0
         binding.mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)                   //Tile save
         binding.mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) //Map colors
         binding.mapView.isHorizontalMapRepetitionEnabled = false                               //Map view lock (no mosaic)
@@ -60,40 +121,22 @@ class PathFinderActivity : AppCompatActivity() {
                 MapView.getTileSystem().maxLongitude,
                 0
         )
-
-        //2) Set test point
-        val point = GeoPoint(51, 0)    //London, UK
-        binding.mapView.controller.setCenter(point)
-
-        //3) Access map if permission granted && service enable
-        if(isAccessAuthorized()){
-            Toast.makeText(this,"OK", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-
-    //MAP ACCESS (PERMISSION/NETWORK/GPS)//
+    }               //Init map providers & settings
     private fun isAccessAuthorized(): Boolean {
-        //1) Get managers
-        val locationManager: LocationManager       = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val connectionManager: ConnectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val wifiManager: WifiManager               = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-
-        //2) Check permissions
+        //1) Check permissions
         if(!isPermissionGranted() && !askForPermissions()){ //First time -> Ask user
             Toast.makeText(this,"Error : Please, authorize GPS and Network permission in settings", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        //3) Check for GPS & Network service
-        if(!isGPSEnable(locationManager) || !isNetworkEnable(connectionManager, wifiManager)){
+        //2) Check for GPS & Network service
+        if(!isGPSEnable() || !isNetworkEnable()){
             return false
         }
 
         return true
-    }                                                              //Manage Map view access
-    private fun isGPSEnable(locationManager: LocationManager): Boolean {
+    }  //Manage Map view access
+    private fun isGPSEnable(): Boolean {
         return if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             Log.d("maps", "GPS OK")
             true
@@ -103,8 +146,8 @@ class PathFinderActivity : AppCompatActivity() {
             Log.d("maps", "ERROR : Please, enable GPS")
             false
         }
-    }                                     //Check for GPS service enable
-    private fun isNetworkEnable(connectionManager: ConnectivityManager, wifiManager: WifiManager): Boolean {
+    }         //Check for GPS service enable
+    private fun isNetworkEnable(): Boolean {
         val networkInfo = connectionManager.activeNetworkInfo
         return if((networkInfo != null && networkInfo.isConnected) || wifiManager.isWifiEnabled){ //Network service enable
             Log.d("maps", "Network OK")
@@ -115,7 +158,7 @@ class PathFinderActivity : AppCompatActivity() {
             Log.d("maps", "ERROR : Please, enable WIFI or mobile data")
             false
         }
-    } //Check for Network service enable
+    }     //Check for Network service enable
     private fun isPermissionGranted(): Boolean {
         val locPermission       = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         val coarseLocPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -134,7 +177,7 @@ class PathFinderActivity : AppCompatActivity() {
             Log.d("maps", "Permissions denied")
             false
         }
-    }                                                             //Check for Permissions
+    } //Check for Permissions
     private fun askForPermissions(): Boolean {
         val permissions = arrayOf(
                 Manifest.permission.ACCESS_NETWORK_STATE,
@@ -148,44 +191,8 @@ class PathFinderActivity : AppCompatActivity() {
         Log.d("maps", "Permissions ask")
 
         return isPermissionGranted() //Granted -> True / Denied -> False
-    }                                                               //Ask user for permissions
+    }   //Ask user for permissions
 
-   /* fun getLocation(): Location? {
-            locationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER,
-                    MIN_TIME_BW_UPDATES,
-                    MIN_DISTANCE_CHANGE_FOR_UPDATES, this)
-            Log.d("Network", "Network")
-            if (locationManager != null) {
-                location = locationManager
-                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                if (location != null) {
-                    latitude = location.getLatitude()
-                    longitude = location.getLongitude()
-                }
-            }
-        }
-
-        // If GPS enabled, get latitude/longitude using GPS Services
-        if (isGPSEnabled) {
-            if (location == null) {
-                locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        MIN_TIME_BW_UPDATES,
-                        MIN_DISTANCE_CHANGE_FOR_UPDATES, this)
-                Log.d("GPS Enabled", "GPS Enabled")
-                if (locationManager != null) {
-                    location = locationManager
-                            .getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    if (location != null) {
-                        latitude = location.getLatitude()
-                        longitude = location.getLongitude()
-                    }
-                }
-            }
-        return location
-    }
-*/
 
 
    /* private fun createRequest() {
