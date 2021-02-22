@@ -7,4 +7,15 @@
     <string name="title_activity_path_finder">Map</string>
     <string name="reload">Reload</string>
     <string name="image_hiding_map_view">Image hiding map view</string>
+    <string name="path_generator_full">Path generator</string>
+    <string name="choose_a_research_method">Choose a research method :</string>
+    <string name="calories">Calories</string>
+    <string name="distance">Distance</string>
+    <string name="light">Light</string>
+    <string name="full">Full</string>
+    <string name="btn_display_path_finding_menu">|_|</string>
+    <string name="age_years">Age (years)</string>
+    <string name="weight_kgs">Weight (kgs)</string>
+    <string name="calories_to_loose">Calories to loose</string>
+    <string name="type_of_activity">Type of activity</string>
 </resources>

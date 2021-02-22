@@ -3,6 +3,7 @@ package fr.yapagi.stepbystep.map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.android.volley.BuildConfig
 import fr.yapagi.stepbystep.databinding.ActivityMapBinding
+import fr.yapagi.stepbystep.routing.RoutingActivity
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -51,12 +53,12 @@ class MapActivity : AppCompatActivity() {
         binding.pfBtnCurrentLocation.setOnClickListener {
             isFollowingEnable = !isFollowingEnable
             if(isFollowingEnable){
-                binding.pfBtnCurrentLocation.text = "O"
+                binding.pfBtnCurrentLocation.text = "X"
                 binding.mapView.controller.setZoom(20)
                 followUser()
             }
             else{
-                binding.pfBtnCurrentLocation.text = "X"
+                binding.pfBtnCurrentLocation.text = "O"
             }
         }
         binding.pfBtnReload.setOnClickListener {
@@ -65,6 +67,7 @@ class MapActivity : AppCompatActivity() {
                 binding.pfBtnReload.visibility = View.GONE
                 binding.pfBtnCurrentLocation.visibility = View.VISIBLE
                 binding.pfHideView.visibility = View.GONE
+                binding.pfBtnFindPath.visibility = View.VISIBLE
 
                 enableAutoRequestLocation()
             }
@@ -73,11 +76,14 @@ class MapActivity : AppCompatActivity() {
                 waitForGPS()
             }
         }
+        binding.pfBtnFindPath.setOnClickListener {
+            val intent = Intent(this, RoutingActivity::class.java)
+            startActivity(intent)
+        }
     }
 
 
 
-    @SuppressLint("MissingPermission")
     override fun onResume() {
         super.onResume()
 
@@ -231,6 +237,7 @@ class MapActivity : AppCompatActivity() {
         binding.pfBtnReload.visibility = View.VISIBLE
         binding.pfBtnCurrentLocation.visibility = View.GONE
         binding.pfHideView.visibility = View.VISIBLE
+        binding.pfBtnFindPath.visibility = View.GONE
     }
 
 
