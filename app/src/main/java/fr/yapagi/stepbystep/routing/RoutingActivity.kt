@@ -56,11 +56,10 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         }
         binding.rBtnValidate.setOnClickListener {
             if(isDataValidated()){
-                if(isDistanceMethodSelected){
-                    tools.distanceToCalories()
-                }
-                else{
-                    result = tools.caloriesToDistance(weight, height, age, activitySelected, caloriesToLoose, isLiteInfoSelected, isAFemale)
+                result = if(isDistanceMethodSelected){
+                    tools.distanceToCalories(weight, height, age, activitySelected, distance, isLiteInfoSelected, isAFemale)
+                } else{
+                    tools.caloriesToDistance(weight, height, age, activitySelected, caloriesToLoose, isLiteInfoSelected, isAFemale)
                 }
             }
         }
