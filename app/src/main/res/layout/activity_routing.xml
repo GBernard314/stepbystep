@@ -6,6 +6,49 @@
     android:layout_height="match_parent"
     tools:context=".routing.RoutingActivity">
 
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/r_calorie_subtitle">
+
+        <Switch
+            android:id="@+id/r_method_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/calories"
+            android:textOff="@string/calories"
+            android:textOn="@string/distance"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <Switch
+            android:id="@+id/r_sex_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/female"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <Switch
+            android:id="@+id/r_info_detail_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/full"
+            android:textOff="@string/full"
+            android:textOn="@string/light"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/r_btn_validate"
         android:layout_width="wrap_content"
@@ -17,12 +60,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center_horizontal|top"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/r_activity_type_spinner">
 
@@ -55,8 +100,8 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/r_heigh_input"
-            android:layout_width="115dp"
+            android:id="@+id/r_height_input"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
@@ -64,24 +109,27 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/heigh_cm" />
+                android:hint="@string/height_cm"
+                android:inputType="numberSigned" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <TextView
-        android:id="@+id/r_full_routing_title"
+        android:id="@+id/r_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/path_generator_full"
+        android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/r_full_routing_calorie_subtitle"
+        android:id="@+id/r_calorie_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -90,33 +138,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/r_full_routing_title" />
-
-    <Switch
-        android:id="@+id/r_full_routing_method_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/calories"
-        android:textOff="@string/calories"
-        android:textOn="@string/distance"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/r_full_routing_calorie_subtitle"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-    <Switch
-        android:id="@+id/r_full_routing_info_detail_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="96dp"
-        android:text="@string/full"
-        android:textOff="@string/full"
-        android:textOn="@string/light"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/r_full_routing_calorie_subtitle"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
+        app:layout_constraintTop_toBottomOf="@+id/r_title" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/r_age_input"
@@ -125,7 +147,7 @@
         android:layout_marginStart="64dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/r_full_routing_method_switch">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="115dp"
@@ -141,7 +163,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="64dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/r_full_routing_info_detail_switch">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="125dp"
