@@ -18,4 +18,7 @@
     <string name="weight_kgs">Weight (kgs)</string>
     <string name="calories_to_loose">Calories to loose</string>
     <string name="type_of_activity">Type of activity</string>
+    <string name="heigh_cm">Heigh (cm)</string>
+    <string name="distance_km">Distance (km)</string>
+    <string name="ok">OK</string>
 </resources>
