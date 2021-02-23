@@ -8,7 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import fr.yapagi.stepbystep.R
 import fr.yapagi.stepbystep.databinding.ActivityRoutingBinding
+import fr.yapagi.stepbystep.map.MapActivity
 import fr.yapagi.stepbystep.tools.Tools
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Polyline
+
 
 class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     lateinit var binding: ActivityRoutingBinding
@@ -21,15 +25,12 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     //PARAMETERS
     private val tools: Tools = Tools()
     private lateinit var activitySelected: ActivityDetail
-    private var height:           Int = 0
+    private var height:          Int = 0
     private var age:             Int = 0
     private var weight:          Int = 0
     private var distance:        Float = 0.0F
     private var caloriesToLoose: Int = 0
     private var isAFemale:       Boolean = true
-
-    //ANSWER
-    private lateinit var result: ResultFromConverter
 
 
 
@@ -56,11 +57,15 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         }
         binding.rBtnValidate.setOnClickListener {
             if(isDataValidated()){
-                result = if(isDistanceMethodSelected){
+                //1) Ask for path details
+                val result = if(isDistanceMethodSelected){
                     tools.distanceToCalories(weight, height, age, activitySelected, distance, isLiteInfoSelected, isAFemale)
                 } else{
                     tools.caloriesToDistance(weight, height, age, activitySelected, caloriesToLoose, isLiteInfoSelected, isAFemale)
                 }
+
+                //2) Get current position & find loop path
+                findPath(MapActivity.getCurrentLocation(), result)
             }
         }
         loadUI()
@@ -174,4 +179,10 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
         return true
     }                                                    //Check if data from path generator are corrects
+
+
+
+    private fun findPath(userLocation: GeoPoint, pathSettings: PathSettings){
+
+    }
 }

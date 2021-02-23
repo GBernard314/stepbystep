@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -19,11 +20,17 @@ import androidx.core.app.ActivityCompat
 import com.android.volley.BuildConfig
 import fr.yapagi.stepbystep.databinding.ActivityMapBinding
 import fr.yapagi.stepbystep.routing.RoutingActivity
+import fr.yapagi.stepbystep.routing.UpdateRoadTask
+import org.osmdroid.bonuspack.routing.OSRMRoadManager
+import org.osmdroid.bonuspack.routing.Road
+import org.osmdroid.bonuspack.routing.RoadManager
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.TilesOverlay
 
 @Suppress("DEPRECATION")
@@ -39,6 +46,9 @@ class MapActivity : AppCompatActivity() {
     private var isFollowingEnable: Boolean = false
     private var isMapReady:        Boolean = false
 
+
+    private var mMapController: MapController? = null
+    var mIncr = 10000
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,14 +98,44 @@ class MapActivity : AppCompatActivity() {
         super.onResume()
 
         initMapSettings() //Permission, providers, colors, position, bound, repetition...
+
+        getRoadAsync()
+    }
+    fun getRoadAsync(){
+        val waypoints = ArrayList<GeoPoint?>(2)
+        var roadStartPoint = GeoPoint(43.117524, 6.021398)
+        var roadEndPoint = GeoPoint(43.138096, 6.021746)
+        waypoints.add(roadStartPoint)
+        waypoints.add(roadEndPoint)
+        val updateRoadTask = UpdateRoadTask(this, binding.mapView)
+        updateRoadTask.execute(waypoints)
+
+        //MAP BOX token : pk.eyJ1IjoicGVyaWZhbm9zIiwiYSI6ImNrbGllZ3MxajBjYW8ycG5tZHB2dWZmeXQifQ.xbzRZtNIxQsHyrySdBdCig
+        //https://api.mapbox.com/directions/v5/mapbox/driving/13.43,52.51;13.42,52.5;13.41,52.5?radiuses=40;;100&geometries=polyline6&access_token=YOUR_MAPBOX_ACCESS_TOKEN
+
+
+        /*val roadManager: RoadManager = OSRMRoadManager(this)
+        val waypoints = ArrayList<GeoPoint>()
+        val startPoint = GeoPoint(43.117524, 6.021398)
+        waypoints.add(startPoint)
+        val endPoint = GeoPoint(43.138096, 6.021746)
+        waypoints.add(endPoint)
+        var road = roadManager.getRoad(waypoints)
+
+        runOnUiThread {
+            if (road?.mStatus != Road.STATUS_OK) {
+                Toast.makeText(this, "t : " + road?.mStatus.toString() + " " + road?.mStatus, Toast.LENGTH_SHORT).show()
+            }
+            val roadOverlay: Polyline = RoadManager.buildRoadOverlay(road, Color.RED, 8F)
+            binding.mapView.overlays.add(roadOverlay)
+        }*/
     }
 
 
-
     //MAP LOCATION//
-    private fun followUser(){
+    fun followUser(){
         //1) Set point & center view on it
-        val point = GeoPoint(getCurrentLocation()[0], getCurrentLocation()[1]) //Lat, Long
+        val point = GeoPoint(getCurrentLocation().latitude, getCurrentLocation().longitude)
         binding.mapView.controller.setCenter(point)
 
         //2) Generate marker
@@ -242,7 +282,6 @@ class MapActivity : AppCompatActivity() {
 
 
 
-
    /* private fun createRequest() {
         
         val queue = Volley.newRequestQueue(this)
@@ -265,11 +304,12 @@ class MapActivity : AppCompatActivity() {
     }*/
 
 
+
     companion object{
         private var currentLocation = Location("")
 
-        fun getCurrentLocation(): DoubleArray {
-            return arrayOf(currentLocation.latitude, currentLocation.longitude).toDoubleArray()
+        fun getCurrentLocation(): GeoPoint {
+            return GeoPoint(currentLocation.latitude, currentLocation.longitude)
         }
     }
 }

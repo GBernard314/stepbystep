@@ -1,6 +1,6 @@
 package fr.yapagi.stepbystep.routing
 
-class ResultFromConverter(
+class PathSettings(
         val calorie: Int,
         val activityTime: Float,
         val distance: Float

@@ -2,7 +2,7 @@ package fr.yapagi.stepbystep.tools
 
 import android.util.Log
 import fr.yapagi.stepbystep.routing.ActivityDetail
-import fr.yapagi.stepbystep.routing.ResultFromConverter
+import fr.yapagi.stepbystep.routing.PathSettings
 
 class Tools {
     fun distanceToCalories(
@@ -13,7 +13,7 @@ class Tools {
             distance: Float,
             isLiteInfo: Boolean,
             isAFemale: Boolean
-    ): ResultFromConverter {
+    ): PathSettings {
         //1) Calcul activity time
         val activityTime = distance / activity.speed
         Log.d("tools", "Activity time : $activityTime")
@@ -26,7 +26,7 @@ class Tools {
         val calories = ((brm / 24) * activity.met * activityTime).toInt()
         Log.d("tools", "Calories : $calories")
 
-        return ResultFromConverter(calories, activityTime, distance)
+        return PathSettings(calories, activityTime, distance)
     }
 
     fun caloriesToDistance(
@@ -37,7 +37,7 @@ class Tools {
             caloriesToLoose: Int,
             isLiteInfo: Boolean,
             isAFemale: Boolean
-    ): ResultFromConverter{
+    ): PathSettings{
        //1) Calcul BRM (physical condition)
         val brm = calculBrm(isAFemale, weight, height, age, isLiteInfo)
         Log.d("tools", "BRM : $brm")
@@ -50,7 +50,7 @@ class Tools {
         val distance = activity.speed * activityTime
         Log.d("tools", "Distance : $distance")
 
-        return ResultFromConverter(caloriesToLoose, activityTime, distance)
+        return PathSettings(caloriesToLoose, activityTime, distance)
     }
 
     private fun calculBrm(
