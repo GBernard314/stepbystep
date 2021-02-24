@@ -18,23 +18,27 @@ class UpdateRoadTask(var context: Context, var map: MapView) : AsyncTask<Any?, V
     override fun doInBackground(vararg params: Any?): Array<Road>? {
         val waypoints = params[0] as ArrayList<GeoPoint>
         val roadManager: RoadManager = OSRMRoadManager(context)
-        return roadManager.getRoads(waypoints)
+        return roadManager.getRoads(waypoints) //waypoints list
     }
 
 
 
     override fun onPostExecute(roads: Array<Road>) {
-        if (roads[0].mStatus != Road.STATUS_OK)
+        if (roads[0].mStatus != Road.STATUS_OK) {
             Toast.makeText(context, "Error " + roads[0].mStatus, Toast.LENGTH_SHORT).show()
+        }
 
+        //Build polylines
         val mRoadOverlays = arrayOfNulls<Polyline>(roads.size)
         for (i in roads.indices) {
             val roadPolyline = RoadManager.buildRoadOverlay(roads[i])
+
             mRoadOverlays[i] = roadPolyline
             roadPolyline.title = "test"
             roadPolyline.color = Color.RED
             roadPolyline.infoWindow = BasicInfoWindow(R.layout.bonuspack_bubble, map)
             roadPolyline.relatedObject = i
+
             map.overlays.add(roadPolyline)
             map.invalidate()
         }

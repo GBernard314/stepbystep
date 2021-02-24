@@ -39,8 +39,8 @@ class MapActivity : AppCompatActivity() {
     private lateinit var wifiManager:       WifiManager
 
     //MAP LOCATION
-    private var isFollowingEnable: Boolean = false
-    private var isMapReady:        Boolean = false
+    private var isMapReady: Boolean = false
+    private var isFollowingUser : Boolean = true
 
 
 
@@ -54,11 +54,10 @@ class MapActivity : AppCompatActivity() {
 
         //BTN
         binding.pfBtnCurrentLocation.setOnClickListener {
-            isFollowingEnable = !isFollowingEnable
-            if(isFollowingEnable){
+            isFollowingUser = !isFollowingUser
+            if(isFollowingUser){
+                zoomOnUser()
                 binding.pfBtnCurrentLocation.text = "X"
-                binding.mapView.controller.setZoom(20)
-                followUser()
             }
             else{
                 binding.pfBtnCurrentLocation.text = "O"
@@ -98,12 +97,18 @@ class MapActivity : AppCompatActivity() {
 
 
     //MAP LOCATION//
-    fun followUser(){
-        //1) Set point & center view on it
+    fun zoomOnUser(){
+        binding.mapView.controller.setZoom(20)
+
+        //1) Reset overlay
+        binding.mapView.overlay.clear()
+        binding.mapView.invalidate()
+
+        //2) Set point & center view on it
         val point = GeoPoint(getCurrentLocation().latitude, getCurrentLocation().longitude)
         binding.mapView.controller.setCenter(point)
 
-        //2) Generate marker
+        //3) Generate marker
         val marker = Marker(binding.mapView)
         marker.position = point
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
@@ -129,8 +134,8 @@ class MapActivity : AppCompatActivity() {
         //4) Init map default settings
         binding.mapView.setBuiltInZoomControls(true)                                           //Zoom settings
         binding.mapView.setMultiTouchControls(true)
-        binding.mapView.controller.setZoom(4)
         binding.mapView.minZoomLevel = 4.0
+        binding.mapView.controller.setZoom(4)
         binding.mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)                   //Tile save
         binding.mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) //Map colors
         binding.mapView.isHorizontalMapRepetitionEnabled = false                               //Map view lock (no mosaic)
@@ -159,11 +164,16 @@ class MapActivity : AppCompatActivity() {
                 }  //Call in first if providers disable
                 override fun onLocationChanged(location: Location) {
                     currentLocation = location
-
-                    if(isFollowingEnable){
-                        followUser()
+                    if(isFollowingUser){
+                        zoomOnUser()
                     }
+
                 } //Update currentLocation each movement detected
+
+                override fun onProviderEnabled(provider: String) {
+                    super.onProviderEnabled(provider)
+                    zoomOnUser()
+                }
             }
         )
     }     //Get location each time the user move
@@ -249,30 +259,32 @@ class MapActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == FIND_PATH_CODE) {
-            val pathSettings = data?.getSerializableExtra(WAYPOINTS) as PathSettings
+        if(requestCode == FIND_PATH_CODE && data?.getSerializableExtra(WAYPOINTS) != null) {
+            val pathSettings = data.getSerializableExtra(WAYPOINTS) as PathSettings
 
-            val marker = Marker(binding.mapView)
-            marker.position = pathSettings.waypoints[1]
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            binding.mapView.overlays.add(marker)
+            //1) Reset overlay
+            binding.mapView.overlays.clear()
+            binding.mapView.invalidate()
 
-            val marker2 = Marker(binding.mapView)
-            marker2.position = pathSettings.waypoints[2]
-            marker2.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            binding.mapView.overlays.add(marker2)
+            for(waypoint in pathSettings.waypoints){
+                val marker = Marker(binding.mapView)
+                marker.position = waypoint
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                binding.mapView.overlays.add(marker)
+                Log.d("maps", "point")
+            }
 
             val updateRoadTask = UpdateRoadTask(this, binding.mapView)
             updateRoadTask.execute(pathSettings.waypoints)
-
        }
     }
 
 
+
     companion object{
         private var currentLocation = Location("")
-        const val FIND_PATH_CODE = 0
-        const val WAYPOINTS = "waypoints"
+        const val FIND_PATH_CODE    = 0
+        const val WAYPOINTS         = "waypoints"
 
         fun getCurrentLocation(): GeoPoint {
             return GeoPoint(currentLocation.latitude, currentLocation.longitude)

@@ -78,7 +78,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
         //2) Set two more points according to the total distance wanted
         var maxNormalDist = pathSettings.distance/4
-        for(nbPoint in 0..2){
+        for(nbPoint in 0..1){
             //Latitude
             val xDistance = Random.nextDouble((maxNormalDist/5).toDouble(), (maxNormalDist/1.5F).toDouble()).toFloat() //Lat dist between 1/5 -> 2/3
             var latDist = tools.distanceToLat(xDistance)
