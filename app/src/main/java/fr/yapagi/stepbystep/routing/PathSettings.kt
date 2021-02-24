@@ -1,8 +1,12 @@
 package fr.yapagi.stepbystep.routing
 
+import org.osmdroid.util.GeoPoint
+import java.io.Serializable
+
 class PathSettings(
-        val calorie: Int,
-        val activityTime: Float,
-        val distance: Float
-) {
+        var calorie: Int,
+        var activityTime: Float,
+        var distance: Float,
+        var waypoints: ArrayList<GeoPoint>
+): Serializable {
 }

@@ -26,7 +26,7 @@ class Tools {
         val calories = ((brm / 24) * activity.met * activityTime).toInt()
         Log.d("tools", "Calories : $calories")
 
-        return PathSettings(calories, activityTime, distance)
+        return PathSettings(calories, activityTime, distance, ArrayList())
     }
 
     fun caloriesToDistance(
@@ -50,7 +50,7 @@ class Tools {
         val distance = activity.speed * activityTime
         Log.d("tools", "Distance : $distance")
 
-        return PathSettings(caloriesToLoose, activityTime, distance)
+        return PathSettings(caloriesToLoose, activityTime, distance, ArrayList())
     }
 
     private fun calculBrm(
@@ -75,5 +75,21 @@ class Tools {
         else{
             ((13.75*weight) + (5*height) - (6.76*age) + 66).toFloat()    //BRM male formula
         }
+    }
+
+    fun distanceToLat(distance: Float): Double {
+        //Latitude: 1 deg = 110.574 km
+        return distance * (1/110.574)
+    }
+    fun distanceToLong(distance: Float, latitude: Double): Double {
+        //Longitude: 1 deg = 111.320*cos(latitude).toDeg() km
+        val latInDeg = Math.toDegrees(kotlin.math.cos(latitude))
+        return distance / (111.320*latInDeg)
+    }
+    fun latToDistance(latitude: Double): Float {
+        return (latitude * 110.574).toFloat()
+    }
+    fun longToDistance(longitude: Double, latitude: Double): Float {
+        return (longitude * 111.320 * Math.toDegrees(latitude)).toFloat()
     }
 }

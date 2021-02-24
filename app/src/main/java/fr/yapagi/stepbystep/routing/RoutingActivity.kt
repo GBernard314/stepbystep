@@ -1,6 +1,9 @@
 package fr.yapagi.stepbystep.routing
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -11,7 +14,8 @@ import fr.yapagi.stepbystep.databinding.ActivityRoutingBinding
 import fr.yapagi.stepbystep.map.MapActivity
 import fr.yapagi.stepbystep.tools.Tools
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.overlay.Polyline
+import kotlin.math.abs
+import kotlin.random.Random
 
 
 class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -56,22 +60,63 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             isAFemale = !isChecked
         }
         binding.rBtnValidate.setOnClickListener {
-            if(isDataValidated()){
-                //1) Ask for path details
-                val result = if(isDistanceMethodSelected){
-                    tools.distanceToCalories(weight, height, age, activitySelected, distance, isLiteInfoSelected, isAFemale)
-                } else{
-                    tools.caloriesToDistance(weight, height, age, activitySelected, caloriesToLoose, isLiteInfoSelected, isAFemale)
-                }
-
-                //2) Get current position & find loop path
-                findPath(MapActivity.getCurrentLocation(), result)
-            }
+            sendData()
         }
         loadUI()
 
         //SPINNER
         updateSpinner()
+    }
+
+
+
+    //PATH//
+    private fun generatePathWaypoints(userLocation: GeoPoint, pathSettings: PathSettings) : ArrayList<GeoPoint> {
+        //1) Set first point (user current location)
+        val firstsPoint = ArrayList<GeoPoint>()
+        firstsPoint.add(GeoPoint(userLocation.latitude, userLocation.longitude))
+
+        //2) Set two more points according to the total distance wanted
+        var maxNormalDist = pathSettings.distance/4
+        for(nbPoint in 0..2){
+            //Latitude
+            val xDistance = Random.nextDouble((maxNormalDist/5).toDouble(), (maxNormalDist/1.5F).toDouble()).toFloat() //Lat dist between 1/5 -> 2/3
+            var latDist = tools.distanceToLat(xDistance)
+            latDist = if(Random.nextBoolean()) -latDist else latDist
+
+            //Longitude
+            var longDist = tools.distanceToLong(maxNormalDist - xDistance, abs(latDist)) //Long dist = size remaining
+            longDist = if(Random.nextBoolean()) -longDist else longDist
+
+            //Last point (user current location)
+            val pointLat  = userLocation.latitude + latDist
+            val pointLong = userLocation.longitude + longDist
+
+            firstsPoint.add(GeoPoint(pointLat, pointLong))
+            Log.d("maps", "Waypoint $nbPoint : $pointLat | $pointLong")
+        }
+
+        firstsPoint.add(GeoPoint(userLocation.latitude, userLocation.longitude))
+        return firstsPoint
+    }
+    private fun sendData() {
+        if(isDataValidated()){
+            //1) Ask for path details
+            val result = if(isDistanceMethodSelected){
+                tools.distanceToCalories(weight, height, age, activitySelected, distance, isLiteInfoSelected, isAFemale)
+            } else{
+                tools.caloriesToDistance(weight, height, age, activitySelected, caloriesToLoose, isLiteInfoSelected, isAFemale)
+            }
+
+            //2) Get path waypoint list
+            result.waypoints = generatePathWaypoints(MapActivity.getCurrentLocation(), result)
+
+            //3) Send result to map activity
+            val intent = Intent()
+            intent.putExtra(MapActivity.WAYPOINTS, result)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
     }
 
 
@@ -182,7 +227,5 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
 
 
-    private fun findPath(userLocation: GeoPoint, pathSettings: PathSettings){
 
-    }
 }

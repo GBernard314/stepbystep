@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -19,20 +18,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.android.volley.BuildConfig
 import fr.yapagi.stepbystep.databinding.ActivityMapBinding
+import fr.yapagi.stepbystep.routing.PathSettings
 import fr.yapagi.stepbystep.routing.RoutingActivity
 import fr.yapagi.stepbystep.routing.UpdateRoadTask
-import org.osmdroid.bonuspack.routing.OSRMRoadManager
-import org.osmdroid.bonuspack.routing.Road
-import org.osmdroid.bonuspack.routing.RoadManager
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.TilesOverlay
 
+//MAP BOX API token : pk.eyJ1IjoicGVyaWZhbm9zIiwiYSI6ImNrbGllZ3MxajBjYW8ycG5tZHB2dWZmeXQifQ.xbzRZtNIxQsHyrySdBdCig
 @Suppress("DEPRECATION")
 class MapActivity : AppCompatActivity() {
     lateinit var binding: ActivityMapBinding
@@ -46,9 +42,6 @@ class MapActivity : AppCompatActivity() {
     private var isFollowingEnable: Boolean = false
     private var isMapReady:        Boolean = false
 
-
-    private var mMapController: MapController? = null
-    var mIncr = 10000
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +81,7 @@ class MapActivity : AppCompatActivity() {
         }
         binding.pfBtnFindPath.setOnClickListener {
             val intent = Intent(this, RoutingActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, FIND_PATH_CODE)
         }
     }
 
@@ -97,39 +90,11 @@ class MapActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        initMapSettings() //Permission, providers, colors, position, bound, repetition...
-
-        getRoadAsync()
+        if(!isMapReady){
+            initMapSettings()
+        }
     }
-    fun getRoadAsync(){
-        val waypoints = ArrayList<GeoPoint?>(2)
-        var roadStartPoint = GeoPoint(43.117524, 6.021398)
-        var roadEndPoint = GeoPoint(43.138096, 6.021746)
-        waypoints.add(roadStartPoint)
-        waypoints.add(roadEndPoint)
-        val updateRoadTask = UpdateRoadTask(this, binding.mapView)
-        updateRoadTask.execute(waypoints)
 
-        //MAP BOX token : pk.eyJ1IjoicGVyaWZhbm9zIiwiYSI6ImNrbGllZ3MxajBjYW8ycG5tZHB2dWZmeXQifQ.xbzRZtNIxQsHyrySdBdCig
-        //https://api.mapbox.com/directions/v5/mapbox/driving/13.43,52.51;13.42,52.5;13.41,52.5?radiuses=40;;100&geometries=polyline6&access_token=YOUR_MAPBOX_ACCESS_TOKEN
-
-
-        /*val roadManager: RoadManager = OSRMRoadManager(this)
-        val waypoints = ArrayList<GeoPoint>()
-        val startPoint = GeoPoint(43.117524, 6.021398)
-        waypoints.add(startPoint)
-        val endPoint = GeoPoint(43.138096, 6.021746)
-        waypoints.add(endPoint)
-        var road = roadManager.getRoad(waypoints)
-
-        runOnUiThread {
-            if (road?.mStatus != Road.STATUS_OK) {
-                Toast.makeText(this, "t : " + road?.mStatus.toString() + " " + road?.mStatus, Toast.LENGTH_SHORT).show()
-            }
-            val roadOverlay: Polyline = RoadManager.buildRoadOverlay(road, Color.RED, 8F)
-            binding.mapView.overlays.add(roadOverlay)
-        }*/
-    }
 
 
     //MAP LOCATION//
@@ -193,7 +158,6 @@ class MapActivity : AppCompatActivity() {
                     waitForGPS()
                 }  //Call in first if providers disable
                 override fun onLocationChanged(location: Location) {
-                    Log.d("maps", "update Latitude:" + location.latitude + ", Longitude:" + location.longitude)
                     currentLocation = location
 
                     if(isFollowingEnable){
@@ -282,31 +246,33 @@ class MapActivity : AppCompatActivity() {
 
 
 
-   /* private fun createRequest() {
-        
-        val queue = Volley.newRequestQueue(this)
-        val coordinate = "13.388860,52.517037;13.397634,52.529407;13.428555,52.523219"
-        val tab = arrayOf( arrayOf(8.681495F, 49.41461F), arrayOf(8.686507F, 49.41943F), arrayOf(8.687872F, 49.420318F) )
-        val url = "https://router.project-osrm.org/route/v1/driving/$coordinate?overview=false"
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-        val request = StringRequest(
-                Request.Method.GET,
-                url,
-                Response.Listener<String> { response ->
-                    Log.d("maps", response)
-                },
-                Response.ErrorListener { error ->
-                    Log.d("maps", error.message.toString())
-                }
-        )
+        if(requestCode == FIND_PATH_CODE) {
+            val pathSettings = data?.getSerializableExtra(WAYPOINTS) as PathSettings
 
-        queue.add(request)
-    }*/
+            val marker = Marker(binding.mapView)
+            marker.position = pathSettings.waypoints[1]
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            binding.mapView.overlays.add(marker)
 
+            val marker2 = Marker(binding.mapView)
+            marker2.position = pathSettings.waypoints[2]
+            marker2.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            binding.mapView.overlays.add(marker2)
+
+            val updateRoadTask = UpdateRoadTask(this, binding.mapView)
+            updateRoadTask.execute(pathSettings.waypoints)
+
+       }
+    }
 
 
     companion object{
         private var currentLocation = Location("")
+        const val FIND_PATH_CODE = 0
+        const val WAYPOINTS = "waypoints"
 
         fun getCurrentLocation(): GeoPoint {
             return GeoPoint(currentLocation.latitude, currentLocation.longitude)
