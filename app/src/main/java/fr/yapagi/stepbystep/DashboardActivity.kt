@@ -125,9 +125,7 @@ class DashboardActivity : AppCompatActivity() {
         //barChart.setDescription("Set Bar Chart Description Here");  // set the description
         barChart.legend
         bardataset.color = R.color.activity_yellow
-        barChart.animateY(1000);
         //barChart.xAxis.valueFormatter = LabelFormatter(days)
-        //barChart.setDescription("");    // Hide the description
         barChart.axisLeft.setDrawLabels(false);
         barChart.axisRight.setDrawLabels(false);
         barChart.xAxis.setDrawLabels(false);
@@ -137,6 +135,7 @@ class DashboardActivity : AppCompatActivity() {
         barChart.axisLeft.setDrawGridLines(false);
         barChart.xAxis.setDrawGridLines(false);
         barChart.description.isEnabled = false;
+        barChart.animateXY(1000, 1000)
 
         /*
             End of bar chart
