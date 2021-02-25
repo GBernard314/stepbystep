@@ -66,10 +66,12 @@
         app:layout_constraintVertical_bias="1.0">
 
         <!-- Steps card -->
+
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView5"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="263dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
@@ -78,7 +80,10 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline10"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            card_view:cardElevation="4dp">
+            card_view:cardElevation="4dp"
+            card_view:layout_constraintBottom_toBottomOf="@+id/cardView3"
+            card_view:layout_constraintHorizontal_bias="0.0"
+            card_view:layout_constraintVertical_bias="0.0">
 
             <TextView
                 android:id="@+id/card1Text"
@@ -105,7 +110,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="48dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginBottom="32dp" >
+                android:layout_marginBottom="32dp">
 
             </com.github.mikephil.charting.charts.PieChart>
 
@@ -113,31 +118,30 @@
                 android:id="@+id/nbSteps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="42dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="32dp"
-                android:text="5000"
-                android:layout_gravity="center"/>
+                android:text="5000" />
 
             <TextView
                 android:id="@+id/steps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="56dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="32dp"
-                android:text="steps"
-                android:layout_gravity="center"/>
+                android:text="steps" />
 
         </androidx.cardview.widget.CardView>
-
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView6"
             android:layout_width="0dp"
-            android:layout_height="290dp"
+            android:layout_height="115dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
@@ -168,20 +172,22 @@
 
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="292dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline10"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView5"
             app:layout_constraintVertical_bias="0.0"
-            card_view:cardElevation="4dp">
+            card_view:cardElevation="4dp"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/card3Text"
@@ -201,6 +207,19 @@
                 card_view:srcCompat="@drawable/flash"
                 card_view:tint="@color/activity_yellow" />
 
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/activity"
+                android:layout_width="351dp"
+                android:layout_height="130dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="32dp">
+
+            </com.github.mikephil.charting.charts.BarChart>
+
+
         </androidx.cardview.widget.CardView>
 
         <androidx.constraintlayout.widget.Guideline
@@ -211,6 +230,7 @@
             app:layout_constraintGuide_begin="205dp" />
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardView3"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
@@ -224,7 +244,8 @@
             app:layout_constraintStart_toStartOf="@+id/guideline10"
             app:layout_constraintTop_toBottomOf="@+id/cardView6"
             app:layout_constraintVertical_bias="1.0"
-            card_view:cardElevation="4dp">
+            card_view:cardElevation="4dp"
+            card_view:layout_constraintBottom_toTopOf="@+id/cardView">
 
             <TextView
                 android:id="@+id/card4Text"
