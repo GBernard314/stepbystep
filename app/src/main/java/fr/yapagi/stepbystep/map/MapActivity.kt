@@ -53,23 +53,23 @@ class MapActivity : AppCompatActivity() {
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
 
         //BTN
-        binding.pfBtnCurrentLocation.setOnClickListener {
+        binding.mBtnCurrentLocation.setOnClickListener {
             isFollowingUser = !isFollowingUser
             if(isFollowingUser){
                 zoomOnUser()
-                binding.pfBtnCurrentLocation.text = "X"
+                binding.mBtnCurrentLocation.text = "X"
             }
             else{
-                binding.pfBtnCurrentLocation.text = "O"
+                binding.mBtnCurrentLocation.text = "O"
             }
         }
-        binding.pfBtnReload.setOnClickListener {
+        binding.mBtnReload.setOnClickListener {
             //Check for providers
             if(isGPSEnable()){
-                binding.pfBtnReload.visibility = View.GONE
-                binding.pfBtnCurrentLocation.visibility = View.VISIBLE
-                binding.pfHideView.visibility = View.GONE
-                binding.pfBtnFindPath.visibility = View.VISIBLE
+                binding.mBtnReload.visibility = View.GONE
+                binding.mBtnCurrentLocation.visibility = View.VISIBLE
+                binding.mHideView.visibility = View.GONE
+                binding.mBtnFindPath.visibility = View.VISIBLE
 
                 enableAutoRequestLocation()
             }
@@ -78,7 +78,7 @@ class MapActivity : AppCompatActivity() {
                 waitForGPS()
             }
         }
-        binding.pfBtnFindPath.setOnClickListener {
+        binding.mBtnFindPath.setOnClickListener {
             val intent = Intent(this, RoutingActivity::class.java)
             startActivityForResult(intent, FIND_PATH_CODE)
         }
@@ -248,10 +248,10 @@ class MapActivity : AppCompatActivity() {
         return isPermissionGranted() //Granted -> True / Denied -> False
     }   //Ask user for permissions
     private fun waitForGPS(){
-        binding.pfBtnReload.visibility = View.VISIBLE
-        binding.pfBtnCurrentLocation.visibility = View.GONE
-        binding.pfHideView.visibility = View.VISIBLE
-        binding.pfBtnFindPath.visibility = View.GONE
+        binding.mBtnReload.visibility = View.VISIBLE
+        binding.mBtnCurrentLocation.visibility = View.GONE
+        binding.mHideView.visibility = View.VISIBLE
+        binding.mBtnFindPath.visibility = View.GONE
     }
 
 
@@ -271,10 +271,9 @@ class MapActivity : AppCompatActivity() {
                 marker.position = waypoint
                 marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                 binding.mapView.overlays.add(marker)
-                Log.d("maps", "point")
             }
 
-            val updateRoadTask = UpdateRoadTask(this, binding.mapView)
+            val updateRoadTask = UpdateRoadTask(this, binding.mapView, binding.mDistanceText, binding.mCaloriesText, binding.mActivityTimeText)
             updateRoadTask.execute(pathSettings.waypoints)
        }
     }
