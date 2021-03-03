@@ -1,36 +1,32 @@
 package fr.yapagi.stepbystep.map
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import com.android.volley.BuildConfig
+import com.mapbox.android.core.permissions.PermissionsListener
+import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.location.LocationComponent
+import com.mapbox.mapboxsdk.location.modes.CameraMode
+import com.mapbox.mapboxsdk.location.modes.RenderMode
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
+import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.Symbol
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import fr.yapagi.stepbystep.R
 import fr.yapagi.stepbystep.databinding.ActivityMapBinding
-import fr.yapagi.stepbystep.routing.PathSettings
-import fr.yapagi.stepbystep.routing.RoutingActivity
-import fr.yapagi.stepbystep.routing.UpdateRoadTask
-import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.TilesOverlay
 
-//MAP BOX API token : pk.eyJ1IjoicGVyaWZhbm9zIiwiYSI6ImNrbGllZ3MxajBjYW8ycG5tZHB2dWZmeXQifQ.xbzRZtNIxQsHyrySdBdCig
+
 @Suppress("DEPRECATION")
-class MapActivity : AppCompatActivity() {
+class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var binding: ActivityMapBinding
 
     //PROVIDERS
@@ -41,14 +37,157 @@ class MapActivity : AppCompatActivity() {
     //MAP LOCATION
     private var isMapReady: Boolean = false
     private var isFollowingUser : Boolean = true
+    private lateinit var permissionsManager: PermissionsManager
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        var mbMap: MapboxMap
+
+        binding.map.getMapAsync { mapboxMap ->
+            mbMap = mapboxMap
+            mapboxMap.setStyle(
+                Style.MAPBOX_STREETS
+            ) { style -> //create this function & code further stuff there
+                initMapStuff(style, mbMap)
+                enableLocationComponent(style, mbMap)
+                addMarkers(style, mbMap)
+            }
+        }
+        binding.map.onCreate(savedInstanceState)
+    }
+    private fun addMarkers(style: Style, mbMap: MapboxMap){
+        val symbols: List<Symbol> = ArrayList()
+
+        var symbolManager = SymbolManager(binding.map, mbMap, style)
+        symbolManager.iconAllowOverlap = true //your choice t/f
+        //symbolManager.textAllowOverlap = false //your choice t/f
+
+        symbolManager.addClickListener { symbol ->
+            Toast.makeText(
+                this,
+                "clicked  " + symbol.textField.toLowerCase(),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        symbolManager.create(
+            SymbolOptions()
+                .withLatLng(LatLng(43.123886, 5.927908))
+                .withIconImage("") //set the below attributes according to your requirements
+                .withIconSize(1.5f)
+                .withIconOffset(arrayOf(0f, -1.5f))
+                .withZIndex(10)
+                .withTextField("my-marker")
+                .withTextHaloColor("rgba(255, 255, 255, 100)")
+                .withTextHaloWidth(5.0f)
+                .withTextAnchor("top")
+                .withTextOffset(arrayOf(0f, 1.5f))
+                .setDraggable(false)
+        )
+
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun enableLocationComponent(loadedMapStyle: Style, mbMap: MapboxMap) {
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            val locationComponent: LocationComponent = mbMap.locationComponent
+            locationComponent.activateLocationComponent(this, loadedMapStyle)
+            locationComponent.isLocationComponentEnabled = true
+            locationComponent.cameraMode = CameraMode.TRACKING
+            locationComponent.renderMode = RenderMode.COMPASS
+        } else {
+            permissionsManager = PermissionsManager(object : PermissionsListener {
+                override fun onExplanationNeeded(permissionsToExplain: List<String>) {
+                    Toast.makeText(this@MapActivity, "location not enabled", Toast.LENGTH_LONG).show()
+                }
+
+                override fun onPermissionResult(granted: Boolean) {
+                    if (granted) {
+                        mbMap.getStyle { style -> initMapStuff(style, mbMap) }
+                    } else {
+                        Toast.makeText(this@MapActivity, "Location services not allowed", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            })
+            permissionsManager.requestLocationPermissions(this)
+        }
+    }
+    @SuppressLint("MissingPermission")
+    private fun initMapStuff(style: Style, mbMap: MapboxMap){
+        binding.mBtnCurrentLocation.setOnClickListener {
+            if (mbMap.locationComponent
+                    .lastKnownLocation != null
+            ) { // Check to ensure coordinates aren't null, probably a better way of doing this...
+                mbMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(
+                            mbMap.locationComponent.lastKnownLocation!!.latitude,
+                            mbMap.locationComponent.lastKnownLocation!!.longitude
+                        ),
+                        14.0
+                    )
+                )
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.map.onSaveInstanceState(outState)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        binding.map.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.map.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.map.onStop()
+    }
+
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        binding.map.onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.map.onDestroy()
+    }
+
+    override fun onMapReady(mapboxMap: MapboxMap) {
+    }
+
+
+/*
         //Application ID needed for map API (Open Street Map)
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
 
@@ -82,22 +221,22 @@ class MapActivity : AppCompatActivity() {
             val intent = Intent(this, RoutingActivity::class.java)
             startActivityForResult(intent, FIND_PATH_CODE)
         }
-    }
+    }*/
 
 
-
+/*
     override fun onResume() {
         super.onResume()
 
         if(!isMapReady){
             initMapSettings()
         }
-    }
+    }*/
 
 
 
     //MAP LOCATION//
-    fun zoomOnUser(){
+    /*fun zoomOnUser(){
         binding.mapView.controller.setZoom(20)
 
         //1) Reset overlay
@@ -288,5 +427,5 @@ class MapActivity : AppCompatActivity() {
         fun getCurrentLocation(): GeoPoint {
             return GeoPoint(currentLocation.latitude, currentLocation.longitude)
         }
-    }
+    }*/
 }

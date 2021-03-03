@@ -20,7 +20,7 @@
         android:theme="@style/Theme.StepByStep"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".routing.RoutingActivity"></activity>
+        <activity android:name=".routing.RoutingActivity" />
         <activity
             android:name=".map.MapActivity"
             android:label="@string/title_activity_path_finder" />

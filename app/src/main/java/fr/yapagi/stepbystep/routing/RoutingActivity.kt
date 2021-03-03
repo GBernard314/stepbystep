@@ -103,7 +103,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         return firstsPoint
     }
     private fun sendData() {
-        if(isDataValidated()){
+        /*if(isDataValidated()){
             //1) Ask for path details
             Tools.init(weight, height, age, activitySelected, isLiteInfoSelected, isAFemale)
             val result = if(isDistanceMethodSelected){
@@ -122,7 +122,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             intent.putExtra(MapActivity.WAYPOINTS, result)
             setResult(Activity.RESULT_OK, intent)
             finish()
-        }
+        }*/
     }
 
 
