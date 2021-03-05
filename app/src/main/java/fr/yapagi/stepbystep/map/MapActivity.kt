@@ -1,10 +1,14 @@
 package fr.yapagi.stepbystep.map
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.mapboxsdk.Mapbox
@@ -19,14 +23,15 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import fr.yapagi.stepbystep.R
 import fr.yapagi.stepbystep.databinding.ActivityMapBinding
+import fr.yapagi.stepbystep.routing.RoutingActivity
 
-@SuppressLint("LogNotTimber") //Permissions already asked before
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener {
     lateinit var binding: ActivityMapBinding
 
-    //MAP LOCATION
+    //MAP
     private lateinit var permissionsManager: PermissionsManager
     private lateinit var style: Style
+    private var isFollowingUser = false
 
 
 
@@ -42,44 +47,33 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
             MapActivity.mapboxMap = mapboxMap
             initMapSettings()
         }
+
+        //BTN
         binding.mBtnCurrentLocation.setOnClickListener {
-            zoomOnUser()
+            isFollowingUser = !isFollowingUser
+            if(isFollowingUser){
+                zoomOnUser()
+                binding.mBtnCurrentLocation.text = "X"
+            }
+            else{
+                binding.mBtnCurrentLocation.text = "O"
+            }
+        }
+        binding.mBtnFindPath.setOnClickListener {
+            val intent = Intent(this, RoutingActivity::class.java)
+            startActivityForResult(intent, FIND_PATH_CODE)
         }
     }
 
 
 
-    //MAP SETTINGS (PERMISSIONS & PROVIDERS)//
-    private fun initMapSettings(){
-        mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
-            this.style = style
-
-            addMarker(getCurrentLocation(), "", Color.RED)
-            enableLocationComponent()
-        }
-    }
-
-
-
-    //MAP INITIALISATION//
+    //MAP FEATURES//
     private fun zoomOnUser(){
         mapboxMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(getCurrentLocation(),18.0)
         )
     }
-    @SuppressLint("MissingPermission") //Permissions already asked before
-    private fun enableLocationComponent() {
-        if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            val locationComponent = mapboxMap.locationComponent
-            locationComponent.activateLocationComponent(this, style);
-            locationComponent.isLocationComponentEnabled = true;
-            locationComponent.cameraMode = CameraMode.TRACKING;
-            locationComponent.renderMode = RenderMode.COMPASS
-        } else {
-            permissionsManager = PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
-        }
-    }
+
     private fun addMarker(location: LatLng, name: String, color: Int){
 
         //1) Create marker manager
@@ -110,7 +104,34 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
 
 
 
-    //MAP LISTENERS//
+    //MAP SETTINGS//
+    private fun initMapSettings(){
+        mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+            this.style = style
+
+            enableLocationComponent()
+        }
+    }
+    private fun enableLocationComponent() {
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            //1) Check for permission denied
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+
+            //2) Enable auto location
+            val locationComponent = mapboxMap.locationComponent
+            locationComponent.activateLocationComponent(this, style)
+            locationComponent.isLocationComponentEnabled = true
+            locationComponent.cameraMode = CameraMode.TRACKING
+            locationComponent.renderMode = RenderMode.COMPASS
+        } else { //Request permission
+            permissionsManager = PermissionsManager(this)
+            permissionsManager.requestLocationPermissions(this)
+        }
+    }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -156,47 +177,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
     override fun onMapReady(mapboxMap: MapboxMap) {}
 
 
-/*
-        //Application ID needed for map API (Open Street Map)
-        Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
-
-        //BTN
-        binding.mBtnCurrentLocation.setOnClickListener {
-            isFollowingUser = !isFollowingUser
-            if(isFollowingUser){
-                zoomOnUser()
-                binding.mBtnCurrentLocation.text = "X"
-            }
-            else{
-                binding.mBtnCurrentLocation.text = "O"
-            }
-        }
-        binding.mBtnReload.setOnClickListener {
-            //Check for providers
-            if(isGPSEnable()){
-                binding.mBtnReload.visibility = View.GONE
-                binding.mBtnCurrentLocation.visibility = View.VISIBLE
-                binding.mHideView.visibility = View.GONE
-                binding.mBtnFindPath.visibility = View.VISIBLE
-
-                enableAutoRequestLocation()
-            }
-            else
-            {
-                waitForGPS()
-            }
-        }
-        binding.mBtnFindPath.setOnClickListener {
-            val intent = Intent(this, RoutingActivity::class.java)
-            startActivityForResult(intent, FIND_PATH_CODE)
-        }
-    }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == FIND_PATH_CODE && data?.getSerializableExtra(WAYPOINTS) != null) {
+        /*if(requestCode == FIND_PATH_CODE && data?.getSerializableExtra(WAYPOINTS) != null) {
             val pathSettings = data.getSerializableExtra(WAYPOINTS) as PathSettings
 
             //1) Reset overlay
@@ -212,11 +197,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
 
             val updateRoadTask = UpdateRoadTask(this, binding.mapView, binding.mDistanceText, binding.mCaloriesText, binding.mActivityTimeText)
             updateRoadTask.execute(pathSettings.waypoints)
-       }
+        }*/
     }
 
 
-*/
+
     companion object{
         lateinit var mapboxMap: MapboxMap
         const val FIND_PATH_CODE    = 0
