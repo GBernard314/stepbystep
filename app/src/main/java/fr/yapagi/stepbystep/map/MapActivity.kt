@@ -6,12 +6,17 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.api.directions.v5.models.DirectionsResponse
+import com.mapbox.api.directions.v5.models.DirectionsRoute
+import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.modes.CameraMode
@@ -21,10 +26,18 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute
+import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute
 import fr.yapagi.stepbystep.R
 import fr.yapagi.stepbystep.databinding.ActivityMapBinding
+import fr.yapagi.stepbystep.routing.PathSettings
 import fr.yapagi.stepbystep.routing.RoutingActivity
+import retrofit.Call
+import retrofit.Callback
+import retrofit.Response
+import retrofit.Retrofit
 
+@SuppressLint("LogNotTimber")
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener {
     lateinit var binding: ActivityMapBinding
 
@@ -32,6 +45,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
     private lateinit var permissionsManager: PermissionsManager
     private lateinit var style: Style
     private var isFollowingUser = false
+
+    //ROUTING
+    var navigationMapRoute: NavigationMapRoute? = null
+    var currentRoute: DirectionsRoute? = null
+
+
 
 
 
@@ -64,6 +83,56 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
             startActivityForResult(intent, FIND_PATH_CODE)
         }
     }
+    private fun getRoute(originPoint: Point, endPoint: Point) {
+        NavigationRoute.builder(this) //1
+            .accessToken(Mapbox.getAccessToken()!!) //2
+            .origin(originPoint) //3
+            .destination(endPoint) //4
+            .build() //5
+            .getRoute(object : Callback<DirectionsResponse>,
+                retrofit2.Callback<DirectionsResponse> { //6
+
+                override fun onFailure(t: Throwable?) {
+                    Log.d("MainActivity", t?.localizedMessage.toString())
+                }
+
+                override fun onResponse(
+                    response: Response<DirectionsResponse>?,
+                    retrofit: Retrofit?
+                ) {
+                    if (navigationMapRoute != null) {
+                        navigationMapRoute?.updateRouteVisibilityTo(false)
+                    } else {
+                        navigationMapRoute = NavigationMapRoute(binding.map, mapboxMap, null)
+                    }
+
+                    currentRoute = response?.body()?.routes()?.first()
+                    if (currentRoute != null) {
+                        navigationMapRoute?.addRoute(currentRoute)
+                    }
+                }
+
+                override fun onFailure(call: retrofit2.Call<DirectionsResponse>, t: Throwable?) {
+                    Log.d("MainActivity", t?.localizedMessage.toString())
+                }
+
+                override fun onResponse(
+                    call: retrofit2.Call<DirectionsResponse>,
+                    response: retrofit2.Response<DirectionsResponse>
+                ) {
+                    if (navigationMapRoute != null) {
+                        navigationMapRoute?.updateRouteVisibilityTo(false)
+                    } else {
+                        navigationMapRoute = NavigationMapRoute(binding.map, mapboxMap, null)
+                    }
+
+                    currentRoute = response.body()?.routes()?.first()
+                    if (currentRoute != null) {
+                        navigationMapRoute?.addRoute(currentRoute)
+                    }
+                }
+            })
+    }
 
 
 
@@ -73,9 +142,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
             CameraUpdateFactory.newLatLngZoom(getCurrentLocation(),18.0)
         )
     }
-
     private fun addMarker(location: LatLng, name: String, color: Int){
 
+
+/*
         //1) Create marker manager
         val symbolManager = SymbolManager(binding.map, mapboxMap, style)
         symbolManager.iconAllowOverlap = true
@@ -99,7 +169,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
                 .withTextAnchor("top")
                 .withTextOffset(arrayOf(0f, 1.5f))
                 .setDraggable(false)
-        )
+        )*/
     }
 
 
@@ -181,31 +251,26 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        /*if(requestCode == FIND_PATH_CODE && data?.getSerializableExtra(WAYPOINTS) != null) {
+        if(requestCode == FIND_PATH_CODE && data?.getSerializableExtra(WAYPOINTS) != null) {
             val pathSettings = data.getSerializableExtra(WAYPOINTS) as PathSettings
 
             //1) Reset overlay
-            binding.mapView.overlays.clear()
-            binding.mapView.invalidate()
+            binding.map.invalidate()
+            mapboxMap.clear()
 
             for(waypoint in pathSettings.waypoints){
-                val marker = Marker(binding.mapView)
-                marker.position = waypoint
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                binding.mapView.overlays.add(marker)
+                val wp = LatLng(waypoint.first.toDouble(), waypoint.second.toDouble())
+                mapboxMap.addMarker(MarkerOptions().position(wp))
             }
-
-            val updateRoadTask = UpdateRoadTask(this, binding.mapView, binding.mDistanceText, binding.mCaloriesText, binding.mActivityTimeText)
-            updateRoadTask.execute(pathSettings.waypoints)
-        }*/
+        }
     }
 
 
 
     companion object{
         lateinit var mapboxMap: MapboxMap
-        const val FIND_PATH_CODE    = 0
-        const val WAYPOINTS         = "waypoints"
+        const val FIND_PATH_CODE = 0
+        const val WAYPOINTS      = "waypoints"
 
         @SuppressLint("MissingPermission")
         fun getCurrentLocation(): LatLng {

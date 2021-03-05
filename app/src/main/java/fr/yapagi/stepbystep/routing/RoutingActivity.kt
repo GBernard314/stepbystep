@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.mapbox.mapboxsdk.geometry.LatLng
 import fr.yapagi.stepbystep.R
 import fr.yapagi.stepbystep.databinding.ActivityRoutingBinding
 import fr.yapagi.stepbystep.map.MapActivity
@@ -16,7 +17,6 @@ import fr.yapagi.stepbystep.tools.Tools
 import org.osmdroid.util.GeoPoint
 import kotlin.math.abs
 import kotlin.random.Random
-
 
 class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     lateinit var binding: ActivityRoutingBinding
@@ -71,10 +71,10 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
 
     //PATH//
-    private fun generatePathWaypoints(userLocation: GeoPoint, pathSettings: PathSettings) : ArrayList<GeoPoint> {
+    private fun generatePathWaypoints(userLocation: LatLng, pathSettings: PathSettings) : ArrayList<Pair<String, String>> {
         //1) Set first point (user current location)
-        val firstsPoint = ArrayList<GeoPoint>()
-        firstsPoint.add(GeoPoint(userLocation.latitude, userLocation.longitude))
+        val firstsPoint = ArrayList<Pair<String, String>>()
+        firstsPoint.add(Pair(userLocation.latitude.toString(), userLocation.longitude.toString()))
 
         //2) Set two more points according to the total distance wanted
         val maxNormalDist = (pathSettings.distance/4).toDouble()
@@ -92,18 +92,18 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             Log.d("maps", "Distance $nbPoint : $xDistance | $yDistance")
 
             //Add to current or last point position
-            val pointLat  = if(nbPoint > 0) firstsPoint[nbPoint-1].latitude + latDist else userLocation.latitude + latDist
-            val pointLong = if(nbPoint > 0) firstsPoint[nbPoint-1].longitude + longDist else userLocation.longitude + longDist
+            val pointLat  = if(nbPoint > 0) firstsPoint[nbPoint-1].first.toDouble() + latDist else userLocation.latitude + latDist
+            val pointLong = if(nbPoint > 0) firstsPoint[nbPoint-1].second.toDouble() + longDist else userLocation.longitude + longDist
 
-            firstsPoint.add(GeoPoint(pointLat, pointLong))
-            //Log.d("maps", "Waypoint $nbPoint : $pointLat | $pointLong")
+            firstsPoint.add(Pair(pointLat.toString(), pointLong.toString()))
+            Log.d("maps", "Waypoint $nbPoint : $pointLat | $pointLong")
         }
 
-        firstsPoint.add(GeoPoint(userLocation.latitude, userLocation.longitude))
+        firstsPoint.add(Pair(userLocation.latitude.toString(), userLocation.longitude.toString()))
         return firstsPoint
     }
     private fun sendData() {
-        /*if(isDataValidated()){
+        if(isDataValidated()){
             //1) Ask for path details
             Tools.init(weight, height, age, activitySelected, isLiteInfoSelected, isAFemale)
             val result = if(isDistanceMethodSelected){
@@ -122,7 +122,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             intent.putExtra(MapActivity.WAYPOINTS, result)
             setResult(Activity.RESULT_OK, intent)
             finish()
-        }*/
+        }
     }
 
 
