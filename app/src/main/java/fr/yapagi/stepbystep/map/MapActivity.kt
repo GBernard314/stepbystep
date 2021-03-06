@@ -52,8 +52,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
 
 
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token))
@@ -82,56 +80,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
             val intent = Intent(this, RoutingActivity::class.java)
             startActivityForResult(intent, FIND_PATH_CODE)
         }
-    }
-    private fun getRoute(originPoint: Point, endPoint: Point) {
-        NavigationRoute.builder(this) //1
-            .accessToken(Mapbox.getAccessToken()!!) //2
-            .origin(originPoint) //3
-            .destination(endPoint) //4
-            .build() //5
-            .getRoute(object : Callback<DirectionsResponse>,
-                retrofit2.Callback<DirectionsResponse> { //6
-
-                override fun onFailure(t: Throwable?) {
-                    Log.d("MainActivity", t?.localizedMessage.toString())
-                }
-
-                override fun onResponse(
-                    response: Response<DirectionsResponse>?,
-                    retrofit: Retrofit?
-                ) {
-                    if (navigationMapRoute != null) {
-                        navigationMapRoute?.updateRouteVisibilityTo(false)
-                    } else {
-                        navigationMapRoute = NavigationMapRoute(binding.map, mapboxMap, null)
-                    }
-
-                    currentRoute = response?.body()?.routes()?.first()
-                    if (currentRoute != null) {
-                        navigationMapRoute?.addRoute(currentRoute)
-                    }
-                }
-
-                override fun onFailure(call: retrofit2.Call<DirectionsResponse>, t: Throwable?) {
-                    Log.d("MainActivity", t?.localizedMessage.toString())
-                }
-
-                override fun onResponse(
-                    call: retrofit2.Call<DirectionsResponse>,
-                    response: retrofit2.Response<DirectionsResponse>
-                ) {
-                    if (navigationMapRoute != null) {
-                        navigationMapRoute?.updateRouteVisibilityTo(false)
-                    } else {
-                        navigationMapRoute = NavigationMapRoute(binding.map, mapboxMap, null)
-                    }
-
-                    currentRoute = response.body()?.routes()?.first()
-                    if (currentRoute != null) {
-                        navigationMapRoute?.addRoute(currentRoute)
-                    }
-                }
-            })
     }
 
 
@@ -248,6 +196,79 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
 
 
 
+    //ROUTING//
+    private fun getRoute(originPoint: Point, endPoint: Point) {
+        NavigationRoute.builder(this)
+            .accessToken(Mapbox.getAccessToken().toString())
+            .origin(originPoint)
+            .destination(endPoint)
+            .profile("walking")
+            .build()
+            .getRoute(object : Callback<DirectionsResponse>,
+                    retrofit2.Callback<DirectionsResponse> {
+
+                override fun onFailure(t: Throwable?) {
+                    Log.d("maps", t?.localizedMessage.toString())
+                }
+
+                override fun onResponse(
+                        response: Response<DirectionsResponse>,
+                        retrofit: Retrofit?
+                ) {
+                    // You can get the generic HTTP info about the response
+                    Log.d("maps", "Response code: " + response.code());
+                    if (response.body() == null) {
+                        Log.e("maps", "No routes found, make sure you set the right user and access token.");
+                        return
+                    } else if (response.body()?.routes()?.size!! < 1) {
+                        Log.e("maps", "No routes found");
+                        return
+                    }
+
+                    currentRoute = response.body()!!.routes()[0];
+
+                    // Draw the route on the map
+                    if (navigationMapRoute != null) {
+                        navigationMapRoute!!.removeRoute();
+                    } else {
+                        navigationMapRoute = NavigationMapRoute(null, binding.map, mapboxMap, R.style.NavigationMapRoute);
+                    }
+                    navigationMapRoute!!.addRoute(currentRoute);
+                }
+
+                override fun onFailure(call: retrofit2.Call<DirectionsResponse>, t: Throwable?) {
+                    Log.d("maps", t?.localizedMessage.toString())
+                }
+
+                override fun onResponse(
+                        call: retrofit2.Call<DirectionsResponse>,
+                        response: retrofit2.Response<DirectionsResponse>
+                ) {
+                    // You can get the generic HTTP info about the response
+                    Log.d("maps", "Response code: " + response.code());
+                    if (response.body() == null) {
+                        Log.e("maps", "No routes found, make sure you set the right user and access token.");
+                        return
+                    } else if (response.body()?.routes()?.size!! < 1) {
+                        Log.e("maps", "No routes found");
+                        return
+                    }
+
+                    currentRoute = response.body()!!.routes()[0];
+
+                    // Draw the route on the map
+                    if (navigationMapRoute != null) {
+                        navigationMapRoute!!.removeRoute();
+                    } else {
+                        navigationMapRoute = NavigationMapRoute(null, binding.map, mapboxMap, R.style.NavigationMapRoute);
+                    }
+                    navigationMapRoute!!.addRoute(currentRoute);
+                }
+            })
+    }
+
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -258,11 +279,23 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
             binding.map.invalidate()
             mapboxMap.clear()
 
-            for(waypoint in pathSettings.waypoints){
-                val wp = LatLng(waypoint.first.toDouble(), waypoint.second.toDouble())
-                mapboxMap.addMarker(MarkerOptions().position(wp))
+
+            if(pathSettings.waypoints.size > 1){
+                val titleList = arrayOf("1", "2", "Start/End")
+                for(numWaypoint in 1 until pathSettings.waypoints.size){
+                    val wp = LatLng(pathSettings.waypoints[numWaypoint].first.toDouble(), pathSettings.waypoints[numWaypoint].second.toDouble())
+                    mapboxMap.addMarker(MarkerOptions().position(wp).setTitle(titleList[numWaypoint-1]))
+
+                    val latStartPoint  = pathSettings.waypoints[numWaypoint-1].first.toDouble()
+                    val longStartPoint = pathSettings.waypoints[numWaypoint-1].second.toDouble()
+                    val latFinalPoint  = pathSettings.waypoints[numWaypoint].first.toDouble()
+                    val longFinalPoint = pathSettings.waypoints[numWaypoint].second.toDouble()
+                    getRoute(Point.fromLngLat(longStartPoint, latStartPoint), Point.fromLngLat(longFinalPoint, latFinalPoint))
+                }
             }
         }
+
+        zoomOnUser()
     }
 
 
