@@ -77,4 +77,8 @@ class Authenticator(private val activity: Activity) {
             }
         })}
     }
+
+    fun getUID() : String? {
+        return auth.currentUser?.uid
+    }
 }
