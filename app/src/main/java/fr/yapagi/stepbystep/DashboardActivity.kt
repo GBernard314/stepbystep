@@ -23,15 +23,17 @@ class DashboardActivity : AppCompatActivity() {
         //setContentView(R.layout.activity_dashboard)
         setContentView(binding.root)
 
-
-
-
         /************************************
          *                                  *
          *          Dummy data              *
          *                                  *
          ************************************/
-
+        /**
+         * YANIS
+         * - For the steps number an Int is enough
+         * - For the steps goal an Int is enough (it can be hard coded for now
+         * - For the activity, you need to convert to to float (i don't know why, but you'll see)
+         */
         /*
             Steps
          */
@@ -72,6 +74,13 @@ class DashboardActivity : AppCompatActivity() {
         listBarDataSet += BarDataSet(calories, "calories")
 
 
+        /************************************
+         *                                  *
+         *          Dummy data              *
+         *                                  *
+         ************************************/
+
+
         /*
             Start of pie chart
          */
@@ -82,17 +91,13 @@ class DashboardActivity : AppCompatActivity() {
         NoOfStep.add(PieEntry(goal, "needed"))
         val dataSet = PieDataSet(NoOfStep, "Number Of Employees")
 
-        dataSet.setColors(intArrayOf(R.color.step_blue, R.color.background_grey), applicationContext)
+        dataSet.setColors(intArrayOf(R.color.od_blue, R.color.background_grey), applicationContext)
 
         dataSet.setDrawIcons(false)
         dataSet.setDrawValues(false)
-        //dataSet.sliceSpace = 3f
-        //dataSet.iconsOffset = MPPointF(0F, 40F)
-        //dataSet.selectionShift = 5f
 
         val data = PieData(dataSet)
         data.setValueTextSize(11f)
-        data.setValueTextColor(Color.WHITE)
         pieChart.setDrawEntryLabels(false)
         pieChart.setDrawMarkers(false)
         pieChart.legend.isEnabled = false
@@ -107,6 +112,11 @@ class DashboardActivity : AppCompatActivity() {
         /*
             End of pie chart
          */
+
+
+
+
+
 
         /*
             Start of bar chart
@@ -173,7 +183,7 @@ class DashboardActivity : AppCompatActivity() {
         barChart.data = dataB; // set the data and list of labels into chart
         //barChart.setDescription("Set Bar Chart Description Here");  // set the description
         barChart.legend
-        listDataSet.elementAt(state).color = resources.getColor(R.color.activity_yellow)
+        listDataSet.elementAt(state).color = resources.getColor(R.color.od_yellow)
 
 
 
