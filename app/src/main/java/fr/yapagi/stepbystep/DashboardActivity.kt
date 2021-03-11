@@ -45,6 +45,10 @@ class DashboardActivity : AppCompatActivity() {
          * - For the steps number an Int is enough
          * - For the steps goal an Int is enough (it can be hard coded for now
          * - For the activity, you need to convert to to float (i don't know why, but you'll see)
+         *
+         * Further improvement would be
+         * - the user picture
+         * - the user name
          */
         /*
             Steps
