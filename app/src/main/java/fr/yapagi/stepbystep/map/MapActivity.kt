@@ -277,7 +277,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
                 val titleList = arrayOf("1", "2", "Start/End")
                 for(numWaypoint in 1 until pathSettings.waypoints.size){
                     val wp = LatLng(pathSettings.waypoints[numWaypoint].first.toDouble(), pathSettings.waypoints[numWaypoint].second.toDouble())
-                    mapboxMap.addMarker(MarkerOptions().position(wp).setTitle(titleList[numWaypoint-1]))
+                    mapboxMap.addMarker(MarkerOptions().position(wp).title("lol"))
 
                     val latStartPoint  = pathSettings.waypoints[numWaypoint-1].first.toDouble()
                     val longStartPoint = pathSettings.waypoints[numWaypoint-1].second.toDouble()

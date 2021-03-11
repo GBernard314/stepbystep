@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import fr.yapagi.stepbystep.routing.ActivityDetail
 import fr.yapagi.stepbystep.routing.PathSettings
 import fr.yapagi.stepbystep.routing.UserDetails
+import kotlin.math.cos
 
 @SuppressLint("LogNotTimber")
 class Tools {
@@ -39,15 +40,13 @@ class Tools {
         return distance * (1/110.574)
     }
     fun distanceToLong(distance: Float, latitude: Double): Double {
-        //Longitude: 1 deg = 111.320*cos(latitude).toDeg() km
-        val latInDeg = Math.toDegrees(kotlin.math.cos(latitude))
-        return distance / (111.320*latInDeg)
+        return distance / ((1.852*60) * cos(latitude))
     }
     fun latToDistance(latitude: Double): Float {
         return (latitude * 110.574).toFloat()
     }
     fun longToDistance(longitude: Double, latitude: Double): Float {
-        return (longitude * 111.320 * Math.toDegrees(latitude)).toFloat()
+        return (longitude * (1.852*60) * cos(latitude)).toFloat()
     }
 
 
