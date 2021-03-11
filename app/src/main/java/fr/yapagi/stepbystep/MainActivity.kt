@@ -7,13 +7,13 @@ import com.google.firebase.FirebaseApp
 import fr.yapagi.stepbystep.network.Authenticator
 import fr.yapagi.stepbystep.adapter.AccountActivityAdapter
 import fr.yapagi.stepbystep.databinding.ActivityAccountBinding
+import fr.yapagi.stepbystep.databinding.ActivityAuthenticationBinding
 
-private lateinit var binding : ActivityAccountBinding
+private lateinit var binding : ActivityAuthenticationBinding
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        binding = ActivityAccountBinding.inflate(layoutInflater)
+        binding = ActivityAuthenticationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         //Firebase stuff starts here

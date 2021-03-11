@@ -60,4 +60,21 @@
     <string name="endingTitle">You are good to go !</string>
     <string name="endButton">Let\'s get started</string>
 
+
+    <string name="title_activity_login">Login</string>
+    <string name="e_mail">E-Mail</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="swipe_left_for_register">Swipe left to register</string>
+
+
+    <string name="register">Register</string>
+    <string name="your_name">Firstname</string>
+    <string name="lastname">Lastname</string>
+    <string name="adresse">Adresse</string>
+    <string name="swipe_right_for_login">Swipe right to login</string>
+
+
+
+
 </resources>
