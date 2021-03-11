@@ -211,16 +211,26 @@ class DashboardActivity : AppCompatActivity() {
         barChart.data = dataB; // set the data and list of labels into chart
         //barChart.setDescription("Set Bar Chart Description Here");  // set the description
         barChart.legend
-        listDataSet.elementAt(state).color = R.color.activity_yellow
+        listDataSet.elementAt(state).color = resources.getColor(R.color.activity_yellow)
+
+
+
+        barChart.setDrawGridBackground(false);
+        barChart.xAxis.setDrawAxisLine(false);
+        barChart.xAxis.setDrawGridLines(false);
+        barChart.axisLeft.setDrawAxisLine(false);
+        barChart.axisLeft.setDrawGridLines(false);
+        barChart.axisRight.setDrawGridLines(false);
+        barChart.axisRight.setDrawAxisLine(false);
+
+
+
         //barChart.xAxis.valueFormatter = LabelFormatter(days)
         barChart.axisLeft.setDrawLabels(false);
         barChart.axisRight.setDrawLabels(false);
         barChart.xAxis.setDrawLabels(false);
 
         barChart.legend.isEnabled = false;   // Hide the legend
-        barChart.axisRight.setDrawGridLines(false);
-        barChart.axisLeft.setDrawGridLines(false);
-        barChart.xAxis.setDrawGridLines(false);
         barChart.description.isEnabled = false;
         barChart.animateXY(500, 500)
         return newState
