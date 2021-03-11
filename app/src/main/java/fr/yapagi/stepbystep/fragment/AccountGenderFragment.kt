@@ -28,32 +28,30 @@ class AccountGenderFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val sharedPreferences = activity?.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE)
         (activity as AccountActivity?)?.setProgressBarValue(30)
 
         binding.maleButton.setOnClickListener{
             binding.maleButton.setBackgroundColor(Color.CYAN)
             binding.femaleButton.setBackgroundColor(Color.parseColor("#FDFDFD"))
             binding.noBinaryButton.setBackgroundColor(Color.parseColor("#FDFDFD"))
+            sharedPreferences?.edit()?.putString(USER_GENDER, binding.maleButton.text.toString())?.commit()
         }
 
         binding.femaleButton.setOnClickListener{
             binding.maleButton.setBackgroundColor(Color.parseColor("#FDFDFD"))
             binding.femaleButton.setBackgroundColor(Color.CYAN)
             binding.noBinaryButton.setBackgroundColor(Color.parseColor("#FDFDFD"))
+            sharedPreferences?.edit()?.putString(USER_GENDER, binding.femaleButton.text.toString())?.commit()
         }
 
         binding.noBinaryButton.setOnClickListener{
             binding.maleButton.setBackgroundColor(Color.parseColor("#FDFDFD"))
             binding.femaleButton.setBackgroundColor(Color.parseColor("#FDFDFD"))
             binding.noBinaryButton.setBackgroundColor(Color.CYAN)
+            sharedPreferences?.edit()?.putString(USER_GENDER, binding.noBinaryButton.text.toString())?.commit()
         }
         super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onDestroyView() {
-        val sharedPreferences = activity?.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE)
-        //sharedPreferences?.edit()?.putString(USER_GENDER, binding.etName.text.toString())?.commit()
-        super.onDestroyView()
     }
 
 
