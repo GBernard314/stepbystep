@@ -38,18 +38,58 @@ class DashboardActivity : AppCompatActivity() {
 
 
 
-        val pieChart = findViewById<PieChart>(R.id.chart)
-        val NoOfEmp = ArrayList<PieEntry>()
-        val tools = Tools()
+        /************************************
+         *                                  *
+         *          Dummy data              *
+         *                                  *
+         ************************************/
+
+        /*
+            Steps
+         */
+        val NoOfStep = ArrayList<PieEntry>()
 
 
         val walked = 5000.toFloat()
         val goal = (15000 - walked)
 
 
+
+        /*
+            activity tracking
+         */
+        val barChart: BarChart = findViewById(R.id.activity);
+
+        val steps: ArrayList<BarEntry> = ArrayList()
+        steps.add( BarEntry(0f, 1000f));
+        steps.add( BarEntry(1f, 500f));
+        steps.add( BarEntry(2f, 564f))
+        steps.add( BarEntry(3f, 234f))
+        steps.add( BarEntry(4f, 700f))
+        steps.add( BarEntry(5f, 1500f))
+        steps.add( BarEntry(5f, 1500f))
+
+        val calories: ArrayList<BarEntry> = ArrayList()
+        calories.add( BarEntry(0f, 10f));
+        calories.add( BarEntry(1f, 5f));
+        calories.add( BarEntry(2f, 5f))
+        calories.add( BarEntry(3f, 2f))
+        calories.add( BarEntry(4f, 7f))
+        calories.add( BarEntry(5f, 15f))
+        calories.add( BarEntry(5f, 15f))
+
+
+        var listBarDataSet = listOf<BarDataSet>()
+        listBarDataSet += BarDataSet(steps, "steps")
+        listBarDataSet += BarDataSet(calories, "calories")
+
+
         /*
             Start of pie chart
          */
+
+        val pieChart = findViewById<PieChart>(R.id.chart)
+
         NoOfStep.add(PieEntry(walked, "steps"))
         NoOfStep.add(PieEntry(goal, "needed"))
         val dataSet = PieDataSet(NoOfStep, "Number Of Employees")
@@ -101,49 +141,26 @@ class DashboardActivity : AppCompatActivity() {
             Start of bar chart
          */
 
-        val barChart: BarChart = findViewById(R.id.activity);
 
         /*
-            changing display of barchart
-            0 = steps count
-            1 = calories
+            Default values
          */
-
-        val steps: ArrayList<BarEntry> = ArrayList()
-        steps.add( BarEntry(0f, 1000f));
-        steps.add( BarEntry(1f, 500f));
-        steps.add( BarEntry(2f, 564f))
-        steps.add( BarEntry(3f, 234f))
-        steps.add( BarEntry(4f, 700f))
-        steps.add( BarEntry(5f, 1500f))
-        steps.add( BarEntry(5f, 1500f))
-
-        val calories: ArrayList<BarEntry> = ArrayList()
-        calories.add( BarEntry(0f, 10f));
-        calories.add( BarEntry(1f, 5f));
-        calories.add( BarEntry(2f, 5f))
-        calories.add( BarEntry(3f, 2f))
-        calories.add( BarEntry(4f, 7f))
-        calories.add( BarEntry(5f, 15f))
-        calories.add( BarEntry(5f, 15f))
-
         var actDisplay = 0
-        //var bardataset = BarDataSet(steps, "Cells")
-        binding.actLogo.setOnClickListener {
+        activityTracking(listBarDataSet, barChart, actDisplay)
+        actDisplay = 1
 
+
+
+        binding.actLogo.setOnClickListener {
             /*
                 Managing the change of data to display
              */
             if (actDisplay == 0){
                 val bardataset =  BarDataSet(steps, "steps")
-                activityTracking(bardataset, barChart, actDisplay)
-
-                actDisplay = 1
+                actDisplay = activityTracking(listBarDataSet, barChart, actDisplay)
             } else {
                 val bardataset =  BarDataSet(calories, "Calories");
-                activityTracking(bardataset, barChart, actDisplay)
-
-                actDisplay = 0
+                actDisplay = activityTracking(listBarDataSet, barChart, actDisplay)
             }
         }
 
@@ -171,18 +188,30 @@ class DashboardActivity : AppCompatActivity() {
     }
 }
 
-    fun activityTracking(barDataSet: BarDataSet, barChart: BarChart, state: Int){
+    fun activityTracking(listDataSet: List<BarDataSet>, barChart: BarChart, state: Int): Int{
         // Changing name of card
-        if (state == 0){
-            binding.actText.text = "Activity : steps"
-        } else {
-            binding.actText.text = "Activity : Calories"
+        var newState = 0
+
+        when (state) {
+            0 -> {
+                binding.actText.text = "Activity : steps"
+                newState ++
+            }
+            1 -> {
+                binding.actText.text = "Activity : calories"
+                newState ++
+            }
         }
-        val dataB = BarData(barDataSet);
+        if (state == listDataSet.size - 1){
+            newState = 0
+        }
+
+
+        val dataB = BarData(listDataSet.elementAt(state));
         barChart.data = dataB; // set the data and list of labels into chart
         //barChart.setDescription("Set Bar Chart Description Here");  // set the description
         barChart.legend
-        barDataSet.color = R.color.activity_yellow
+        listDataSet.elementAt(state).color = R.color.activity_yellow
         //barChart.xAxis.valueFormatter = LabelFormatter(days)
         barChart.axisLeft.setDrawLabels(false);
         barChart.axisRight.setDrawLabels(false);
@@ -194,6 +223,7 @@ class DashboardActivity : AppCompatActivity() {
         barChart.xAxis.setDrawGridLines(false);
         barChart.description.isEnabled = false;
         barChart.animateXY(500, 500)
+        return newState
     }
 
     class LabelFormatter(private val mLabels: ArrayList<String>) : IAxisValueFormatter {
