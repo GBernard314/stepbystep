@@ -56,7 +56,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="102dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="32dp"
         android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -190,7 +190,7 @@
             card_view:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/card3Text"
+                android:id="@+id/actText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
@@ -198,7 +198,7 @@
 
 
             <ImageView
-                android:id="@+id/imageView6"
+                android:id="@+id/actLogo"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_gravity="right"
@@ -209,8 +209,8 @@
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/activity"
-                android:layout_width="351dp"
-                android:layout_height="130dp"
+                android:layout_width="329dp"
+                android:layout_height="94dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="48dp"
