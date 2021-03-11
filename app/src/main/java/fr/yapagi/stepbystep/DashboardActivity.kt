@@ -18,15 +18,10 @@ import fr.yapagi.stepbystep.map.MapActivity
 import fr.yapagi.stepbystep.timer.TimerActivity
 import fr.yapagi.stepbystep.tools.Tools
 
-
 class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-
-        lateinit var locationManager: LocationManager
-        lateinit var connectionManager: ConnectivityManager
-        lateinit var wifiManager: WifiManager
 
         val pieChart = findViewById<PieChart>(R.id.chart)
         val NoOfEmp = ArrayList<PieEntry>()
@@ -70,19 +65,9 @@ class DashboardActivity : AppCompatActivity() {
 
         val tmpMap = findViewById<CardView>(R.id.activity)
         tmpMap.setOnClickListener{
-            locationManager   = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            connectionManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            wifiManager       = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-
-            if(tools.isPermissionsGranted(this) &&
-                tools.isGPSEnable(locationManager, this) &&
-                tools.isNetworkEnable(connectionManager, wifiManager, this)
-            ) {
+            if(tools.isPermissionAndProvidersEnable(this)){
                 val intent = Intent(this, MapActivity::class.java)
                 startActivity(intent)
-            }
-            else{
-                tools.askForPermissions(this)
             }
         }
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TMP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

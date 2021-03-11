@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -24,15 +23,12 @@ import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute
 import fr.yapagi.stepbystep.R
 import fr.yapagi.stepbystep.databinding.ActivityMapBinding
 import fr.yapagi.stepbystep.routing.PathSettings
 import fr.yapagi.stepbystep.routing.RoutingActivity
-import retrofit.Call
 import retrofit.Callback
 import retrofit.Response
 import retrofit.Retrofit
@@ -266,9 +262,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
                 }
             })
     }
-
-
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
