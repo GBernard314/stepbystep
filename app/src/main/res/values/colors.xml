@@ -8,7 +8,21 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="cal_pink">#FF0062</color>
+    <color name="heart_red">#FF0062</color>
     <color name="step_blue">#005AFF</color>
     <color name="activity_yellow">#FFBD00</color>
     <color name="background_grey">#f7f7f7</color>
+
+    <color name="od_green">#98c379</color>
+    <color name="od_purple">#c678dd</color>
+    <color name="od_yellow">#e5c07b</color>
+    <color name="od_yellow_dark">#d19a66</color>
+    <color name="od_blue">#61afef</color>
+    <color name="od_cyan">#56b6c2</color>
+    <color name="od_red">#e06c75</color>
+    <color name="od_red_dark">#be5046</color>
+    <color name="od_black">#282c34</color>
+    <color name="od_white">#abb2bf</color>
+    <color name="od_grey_grey">#5c6370</color>
+    <color name="od_grey_dark">#4b5263</color>
 </resources>
