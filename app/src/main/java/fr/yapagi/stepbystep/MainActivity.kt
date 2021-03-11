@@ -3,6 +3,7 @@ package fr.yapagi.stepbystep
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.google.firebase.FirebaseApp
 import fr.yapagi.stepbystep.data.Goal
 import fr.yapagi.stepbystep.data.User
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
         val auth = Authenticator(this)
         //Logs user in as "JDoe" (Dummy values for test purposes)
-        auth.login("john.doe@gmail.com", "password")
+        //auth.login("john.doe@gmail.com", "password")
 
         val goal = Goal(auth.getUID(), 80.0F, 1)
         val db = Database()

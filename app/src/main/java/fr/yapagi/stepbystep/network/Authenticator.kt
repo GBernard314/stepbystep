@@ -53,6 +53,9 @@ class Authenticator(private val activity: Activity) {
             }
     }
 
+    fun logout(){
+        auth.signOut()
+    }
 
     /**
      * This method updates the user attribute of this class using Firebase authenticator
