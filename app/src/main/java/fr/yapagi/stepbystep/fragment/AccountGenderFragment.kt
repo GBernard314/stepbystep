@@ -1,6 +1,7 @@
 package fr.yapagi.stepbystep.fragment
 
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -47,5 +48,18 @@ class AccountGenderFragment : Fragment() {
             binding.noBinaryButton.setBackgroundColor(Color.CYAN)
         }
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        val sharedPreferences = activity?.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE)
+        //sharedPreferences?.edit()?.putString(USER_GENDER, binding.etName.text.toString())?.commit()
+        super.onDestroyView()
+    }
+
+
+    companion object {
+
+        const val APP_PREFS = "app_prefs"
+        const val USER_GENDER = "gender"
     }
 }

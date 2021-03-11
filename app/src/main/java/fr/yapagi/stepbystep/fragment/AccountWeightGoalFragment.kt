@@ -1,5 +1,6 @@
 package fr.yapagi.stepbystep.fragment
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -72,5 +73,18 @@ class AccountWeightGoalFragment : Fragment() {
         override fun getTextWithMaximumLength(): String {
             return "00"
         }
+    }
+
+    override fun onStop() {
+        println("Writting Weight Goal")
+        val sharedPreferences = activity?.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE)
+        sharedPreferences?.edit()?.putString(USER_WEIGHT, binding.numberPicker.getCurrentItem())?.commit()
+        super.onStop()
+    }
+
+
+    companion object {
+        const val APP_PREFS = "app_prefs"
+        const val USER_WEIGHT = "weight_goal"
     }
 }

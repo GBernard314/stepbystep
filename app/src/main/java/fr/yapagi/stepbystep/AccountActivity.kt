@@ -3,6 +3,7 @@ package fr.yapagi.stepbystep
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import fr.yapagi.stepbystep.adapter.AccountActivityAdapter
 import fr.yapagi.stepbystep.databinding.ActivityAccountBinding
@@ -26,4 +27,5 @@ class AccountActivity : AppCompatActivity() {
     public fun setProgressBarValue(value: Int){
         binding.progressBar2.setProgress(value, true)
     }
+
 }

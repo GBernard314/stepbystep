@@ -12,7 +12,7 @@ class AccountActivityAdapter(
 ) : FragmentStateAdapter(activity) {
 
     override fun getItemCount(): Int {
-        return 7
+        return 8
     }
 
     override fun createFragment(position: Int): Fragment {
@@ -24,6 +24,7 @@ class AccountActivityAdapter(
             4 -> return AccountWeightFragment()
             5 -> return AccountWeightGoalFragment()
             6 -> return AccountIntensityFragment()
+            7 -> return AccountEndingFragment()
         }
         return AccountLandingFragment() //does not happen
     }

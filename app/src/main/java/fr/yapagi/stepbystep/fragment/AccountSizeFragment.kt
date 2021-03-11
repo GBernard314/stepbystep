@@ -1,5 +1,6 @@
 package fr.yapagi.stepbystep.fragment
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -45,7 +46,6 @@ class AccountSizeFragment : Fragment() {
                 return "0$position"
             if (position < 1)
                 return "0"
-
             return position.toString()
         }
 
@@ -76,5 +76,18 @@ class AccountSizeFragment : Fragment() {
         override fun getTextWithMaximumLength(): String {
             return "00"
         }
+    }
+
+    override fun onStop() {
+        val sharedPreferences = activity?.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE)
+        sharedPreferences?.edit()?.putString(USER_SIZE, binding.numberPicker.getCurrentItem())?.commit()
+        super.onStop()
+    }
+
+
+    companion object {
+
+        const val APP_PREFS = "app_prefs"
+        const val USER_SIZE = "size"
     }
 }
