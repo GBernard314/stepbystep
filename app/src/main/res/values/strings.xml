@@ -39,4 +39,22 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="noBinary">Non-Binary</string>
+
+    <string name="weight_description">This helps us to determine your BMI ( Body Mass Index )</string>
+    <string name="weight_title">How much do you weight?</string>
+
+    <string name="weight_goal_description">Select your ideal weight goal. Based on your BMI we suggest 82kg</string>
+    <string name="weight_goal_title">How much do you weight?</string>
+
+    <string name="size_description">This helps us to determine your BMI ( Body Mass Index )</string>
+    <string name="size_title">How tall are you?</string>
+
+
+    <string name="accountIntensityDescription">Try to not overdo if it is your first time</string>
+    <string name="accountIntensityTitle">Select your training intensity</string>
+
+    <string name="lightButton">Light (2 run p/w)</string>
+    <string name="mediumButton">Medium (3 run p/w)</string>
+    <string name="intenseButton">Intense (5 run p/w)</string>
+
 </resources>

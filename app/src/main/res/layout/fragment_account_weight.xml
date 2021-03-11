@@ -10,6 +10,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/weight_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/weight_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/weight_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/weight_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weight_title" />
+
         <com.super_rabbit.wheel_picker.WheelPicker
             android:id="@+id/numberPicker"
             android:layout_width="wrap_content"
@@ -21,44 +40,27 @@
             app:align="CENTER"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/size_description"
+            app:layout_constraintTop_toBottomOf="@+id/weight_description"
             app:max="9"
             app:min="0"
             app:typeface="serif"
             app:wheelItemCount="5" />
 
         <TextView
-            android:id="@+id/size_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/size_title"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/size_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/size_description"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/size_title" />
-
-        <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="64dp"
             android:layout_marginBottom="8dp"
-            android:text="CM"
+            android:text="KG"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="@+id/numberPicker"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/numberPicker"
-            app:layout_constraintTop_toTopOf="@+id/numberPicker"
-            app:layout_constraintVertical_bias="0.508" />
+            app:layout_constraintTop_toTopOf="@+id/numberPicker" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </FrameLayout>

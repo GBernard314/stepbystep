@@ -4,10 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import fr.yapagi.stepbystep.fragment.AccountGenderFragment
-import fr.yapagi.stepbystep.fragment.AccountLandingFragment
-import fr.yapagi.stepbystep.fragment.AccountNameFragment
-import fr.yapagi.stepbystep.fragment.AccountSizeFragment
+import fr.yapagi.stepbystep.fragment.*
 
 class AccountActivityAdapter(
     activity: AppCompatActivity,
@@ -15,7 +12,7 @@ class AccountActivityAdapter(
 ) : FragmentStateAdapter(activity) {
 
     override fun getItemCount(): Int {
-        return 4
+        return 7
     }
 
     override fun createFragment(position: Int): Fragment {
@@ -24,6 +21,9 @@ class AccountActivityAdapter(
             1 -> return AccountNameFragment()
             2 -> return AccountGenderFragment()
             3 -> return AccountSizeFragment()
+            4 -> return AccountWeightFragment()
+            5 -> return AccountWeightGoalFragment()
+            6 -> return AccountIntensityFragment()
         }
         return AccountLandingFragment() //does not happen
     }

@@ -10,31 +10,27 @@ import androidx.annotation.RequiresApi
 import com.super_rabbit.wheel_picker.WheelAdapter
 import fr.yapagi.stepbystep.AccountActivity
 import fr.yapagi.stepbystep.R
-import fr.yapagi.stepbystep.databinding.FragmentAccountSizeBinding
-import java.text.SimpleDateFormat
-import java.util.*
+import fr.yapagi.stepbystep.databinding.FragmentAccountWeightBinding
+import fr.yapagi.stepbystep.databinding.FragmentAccountWeightGoalBinding
 
-
-private lateinit var binding : FragmentAccountSizeBinding
-
-class AccountSizeFragment : Fragment() {
-
+private lateinit var binding : FragmentAccountWeightGoalBinding
+class AccountWeightGoalFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentAccountSizeBinding.inflate(layoutInflater, container, false)
+        binding = FragmentAccountWeightGoalBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        (activity as AccountActivity?)?.setProgressBarValue(40)
+        (activity as AccountActivity?)?.setProgressBarValue(70)
         val picker = binding.numberPicker;
         picker.setWheelItemCount(5)
         picker.setSelectedTextColor(R.color.colorPrimary)
         picker.setUnselectedTextColor(R.color.color_26_gray)
-        picker.scrollTo(140)
+        picker.scrollTo(60)
         picker.setAdapter(PickerAdapter())
         super.onViewCreated(view, savedInstanceState)
     }
