@@ -22,7 +22,7 @@
     <string name="distance_km">Distance (km)</string>
     <string name="ok">OK</string>
     <string name="female">Female</string>
-    <string name="x">X</string>
     <string name="activitytime">ActivityTime</string>
     <string name="mapbox_access_token">pk.eyJ1IjoicGVyaWZhbm9zIiwiYSI6ImNrbGllZ3MxajBjYW8ycG5tZHB2dWZmeXQifQ.xbzRZtNIxQsHyrySdBdCig</string>
+    <string name="o">O</string>
 </resources>

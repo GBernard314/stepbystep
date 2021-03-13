@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import android.widget.ViewAnimator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.mapbox.android.core.permissions.PermissionsListener
@@ -27,8 +29,11 @@ import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute
 import fr.yapagi.stepbystep.R
 import fr.yapagi.stepbystep.databinding.ActivityMapBinding
+import fr.yapagi.stepbystep.routing.ActivityDetail
 import fr.yapagi.stepbystep.routing.PathSettings
 import fr.yapagi.stepbystep.routing.RoutingActivity
+import fr.yapagi.stepbystep.routing.UserDetails
+import fr.yapagi.stepbystep.tools.Tools
 import retrofit.Callback
 import retrofit.Response
 import retrofit.Retrofit
@@ -40,11 +45,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
     //MAP
     private lateinit var permissionsManager: PermissionsManager
     private lateinit var style: Style
-    private var isFollowingUser = false
 
     //ROUTING
-    var navigationMapRoute: NavigationMapRoute? = null
-    var currentRoute: DirectionsRoute? = null
+    private var navigationMapRoute: NavigationMapRoute? = null
+    private var roads: ArrayList<DirectionsRoute> = ArrayList()
+    private var pathSettings = PathSettings(0, 0f, 0f, ArrayList())
+    private var userDetails = UserDetails(0, 0, 0, ActivityDetail("", 0f, 0f), false, false, 0f, 0)
 
 
 
@@ -63,14 +69,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
 
         //BTN
         binding.mBtnCurrentLocation.setOnClickListener {
-            isFollowingUser = !isFollowingUser
-            if(isFollowingUser){
-                zoomOnUser()
-                binding.mBtnCurrentLocation.text = "X"
-            }
-            else{
-                binding.mBtnCurrentLocation.text = "O"
-            }
+            zoomOnUser()
         }
         binding.mBtnFindPath.setOnClickListener {
             val intent = Intent(this, RoutingActivity::class.java)
@@ -83,37 +82,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
     //MAP FEATURES//
     private fun zoomOnUser(){
         mapboxMap.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(getCurrentLocation(),18.0)
+            CameraUpdateFactory.newLatLngZoom(getCurrentLocation(),17.0)
         )
-    }
-    private fun addMarker(location: LatLng, name: String, color: Int){
-
-
-/*
-        //1) Create marker manager
-        val symbolManager = SymbolManager(binding.map, mapboxMap, style)
-        symbolManager.iconAllowOverlap = true
-
-        //2) Marker click listener
-        symbolManager.addClickListener { symbol ->
-            Toast.makeText(this, "clicked " + symbol.textField, Toast.LENGTH_SHORT).show()
-        }
-
-        //3) Generate marker
-        symbolManager.create(
-            SymbolOptions()
-                .withLatLng(location)
-                .withIconImage("") //set the below attributes according to your requirements
-                .withIconSize(1.5f)
-                .withIconOffset(arrayOf(0f, -1.5f))
-                .withZIndex(10)
-                .withTextField(name)
-                .withTextHaloColor("rgba(${Color.red(color)}, ${Color.green(color)}, ${Color.blue(color)}, 100)")
-                .withTextHaloWidth(5.0f)
-                .withTextAnchor("top")
-                .withTextOffset(arrayOf(0f, 1.5f))
-                .setDraggable(false)
-        )*/
     }
 
 
@@ -204,91 +174,107 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
                     retrofit2.Callback<DirectionsResponse> {
 
                 override fun onFailure(t: Throwable?) {
-                    Log.d("maps", t?.localizedMessage.toString())
+                    Toast.makeText(applicationContext, t?.localizedMessage.toString(), Toast.LENGTH_LONG).show()
                 }
-
-                override fun onResponse(
-                        response: Response<DirectionsResponse>,
-                        retrofit: Retrofit?
-                ) {
-                    // You can get the generic HTTP info about the response
-                    Log.d("maps", "Response code: " + response.code());
-                    if (response.body() == null) {
-                        Log.e("maps", "No routes found, make sure you set the right user and access token.");
-                        return
-                    } else if (response.body()?.routes()?.size!! < 1) {
-                        Log.e("maps", "No routes found");
-                        return
-                    }
-
-                    currentRoute = response.body()!!.routes()[0];
-
-                    // Draw the route on the map
-                    if (navigationMapRoute != null) {
-                        navigationMapRoute!!.removeRoute();
-                    } else {
-                        navigationMapRoute = NavigationMapRoute(null, binding.map, mapboxMap, R.style.NavigationMapRoute);
-                    }
-                    navigationMapRoute!!.addRoute(currentRoute);
-                }
-
+                override fun onResponse(response: Response<DirectionsResponse>, retrofit: Retrofit?) {}
                 override fun onFailure(call: retrofit2.Call<DirectionsResponse>, t: Throwable?) {
-                    Log.d("maps", t?.localizedMessage.toString())
+                    Toast.makeText(applicationContext, t?.localizedMessage.toString(), Toast.LENGTH_LONG).show()
                 }
+                override fun onResponse(call: retrofit2.Call<DirectionsResponse>, response: retrofit2.Response<DirectionsResponse>) {
 
-                override fun onResponse(
-                        call: retrofit2.Call<DirectionsResponse>,
-                        response: retrofit2.Response<DirectionsResponse>
-                ) {
-                    // You can get the generic HTTP info about the response
-                    Log.d("maps", "Response code: " + response.code());
+                    //1) Test for road data back
                     if (response.body() == null) {
-                        Log.e("maps", "No routes found, make sure you set the right user and access token.");
+                        Log.e("maps", "No routes found, make sure you set the right user and access token.")
+                        Toast.makeText(applicationContext, "User or Token problem, please contact support", Toast.LENGTH_LONG).show()
                         return
                     } else if (response.body()?.routes()?.size!! < 1) {
-                        Log.e("maps", "No routes found");
+                        Log.e("maps", "No routes found")
+                        Toast.makeText(applicationContext, "No route found", Toast.LENGTH_LONG).show()
                         return
                     }
 
-                    currentRoute = response.body()!!.routes()[0];
+                    //2) Save data
+                    roads.add(response.body()!!.routes()[0])
 
-                    // Draw the route on the map
-                    if (navigationMapRoute != null) {
-                        navigationMapRoute!!.removeRoute();
-                    } else {
-                        navigationMapRoute = NavigationMapRoute(null, binding.map, mapboxMap, R.style.NavigationMapRoute);
+                    //3) Display on map
+                    if(roads.size > 2) {
+                        displayRoadOnMap()
                     }
-                    navigationMapRoute!!.addRoute(currentRoute);
                 }
             })
+    }
+    private fun displayRoadOnMap(){
+
+        //1) Reset map road & markers
+        if (navigationMapRoute != null) {
+            navigationMapRoute!!.removeRoute()
+        } else {
+            navigationMapRoute = NavigationMapRoute(null, binding.map, mapboxMap, R.style.NavigationMapRoute)
+        }
+
+        //2) Display road
+        navigationMapRoute!!.addRoutes(roads)
+
+        //3) Save roads data
+        val tools = Tools()
+        pathSettings.calorie = 0
+        pathSettings.distance = 0f
+        pathSettings.activityTime = 0f
+
+        userDetails.distance = 0f
+        for(road in roads){
+
+            //Update user details with real information generated
+            userDetails.distance += road.distance()!!.toFloat()
+
+            pathSettings.distance += road.distance()!!.toFloat()
+            pathSettings.activityTime += road.duration()!!.toFloat()
+        }
+
+        pathSettings.calorie += tools.distanceToCalories(userDetails).calorie
+
+        binding.mActivityTimeText.visibility = View.VISIBLE
+        binding.mActivityTimeText.text       = "${pathSettings.activityTime/100} min"
+
+        binding.mCaloriesText.visibility     = View.VISIBLE
+        binding.mCaloriesText.text           = "${pathSettings.calorie/1000} kcal"
+
+        binding.mDistanceText.visibility     = View.VISIBLE
+        binding.mDistanceText.text           = "${pathSettings.distance/1000} km"
+
+        zoomOnUser()
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if(requestCode == FIND_PATH_CODE && data?.getSerializableExtra(WAYPOINTS) != null) {
             val pathSettings = data.getSerializableExtra(WAYPOINTS) as PathSettings
+            this.userDetails = data.getSerializableExtra(USER_DETAILS) as UserDetails
 
             //1) Reset overlay
             binding.map.invalidate()
             mapboxMap.clear()
 
-
+            //2) Get routes
             if(pathSettings.waypoints.size > 1){
-                val titleList = arrayOf("1", "2", "Start/End")
-                for(numWaypoint in 1 until pathSettings.waypoints.size){
+                val titles = ArrayList<String>()
+                titles.add("Départ/Arrivé")
+                titles.add("1")
+                titles.add("2")
+                for(numWaypoint in 0..2){
                     val wp = LatLng(pathSettings.waypoints[numWaypoint].first.toDouble(), pathSettings.waypoints[numWaypoint].second.toDouble())
-                    mapboxMap.addMarker(MarkerOptions().position(wp).title("lol"))
+                    mapboxMap.addMarker(MarkerOptions().position(wp).title(titles[numWaypoint]))
 
-                    val latStartPoint  = pathSettings.waypoints[numWaypoint-1].first.toDouble()
-                    val longStartPoint = pathSettings.waypoints[numWaypoint-1].second.toDouble()
-                    val latFinalPoint  = pathSettings.waypoints[numWaypoint].first.toDouble()
-                    val longFinalPoint = pathSettings.waypoints[numWaypoint].second.toDouble()
+                    val latStartPoint  = pathSettings.waypoints[numWaypoint].first.toDouble()
+                    val longStartPoint = pathSettings.waypoints[numWaypoint].second.toDouble()
+
+                    val latFinalPoint  = pathSettings.waypoints[numWaypoint+1].first.toDouble()
+                    val longFinalPoint = pathSettings.waypoints[numWaypoint+1].second.toDouble()
+
                     getRoute(Point.fromLngLat(longStartPoint, latStartPoint), Point.fromLngLat(longFinalPoint, latFinalPoint))
                 }
             }
         }
-
-        zoomOnUser()
     }
 
 
@@ -297,6 +283,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
         lateinit var mapboxMap: MapboxMap
         const val FIND_PATH_CODE = 0
         const val WAYPOINTS      = "waypoints"
+        const val USER_DETAILS      = "user_details"
 
         @SuppressLint("MissingPermission")
         fun getCurrentLocation(): LatLng {

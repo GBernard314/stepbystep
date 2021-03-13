@@ -74,32 +74,28 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     //PATH//
     private fun generatePathWaypoints(userLocation: LatLng, pathSettings: PathSettings) : ArrayList<Pair<String, String>> {
 
-        Log.d("maps", "1) Distance got : ${pathSettings.distance}")
         //1) Set first point (user current location)
         val firstsPoint = ArrayList<Pair<String, String>>()
         firstsPoint.add(Pair(userLocation.latitude.toString(), userLocation.longitude.toString()))
-        Log.d("maps", "2) Wp 0 -> ${firstsPoint[0].first} : ${firstsPoint[0].second}")
+        Log.d("maps", "Wp 0 -> ${firstsPoint[0].first} : ${firstsPoint[0].second}")
 
         //2) Set two more points according to the total distance wanted
         val pathPartDistance = (pathSettings.distance/4).toDouble()
-        Log.d("maps", "3) Distance for part : $pathPartDistance")
         for(nbPoint in 0..1){
 
-            //1) Get kilometer distance
+            //2.1) Get kilometer distance
             val longDistanceInKm = Random.nextDouble(pathPartDistance/10, pathPartDistance - pathPartDistance/10).toFloat() //Lat dist between 1/8 -> 7/8
-            val latDistanceInKm = (pathPartDistance - longDistanceInKm).toFloat()                                                              //Long dist = 1/8 -> size remaining
-            Log.d("maps", "KM -> Lat = $latDistanceInKm / Long = $longDistanceInKm")
+            val latDistanceInKm = (pathPartDistance - longDistanceInKm).toFloat()                                                       //Long dist = 1/8 -> size remaining
 
-            //2) Convert distance to lat/long
+            //2.2) Convert distance to lat/long
             var latDist  = tools.distanceToLat(latDistanceInKm)
             var longDist = tools.distanceToLong(longDistanceInKm, latDist)
 
-            //3) Set negative/positive value
+            //2.3) Set negative/positive value
             latDist  = if(Random.nextBoolean()) -latDist else latDist
             longDist = if(Random.nextBoolean()) -longDist else longDist
-            Log.d("maps", "°  -> Lat = $latDist / Long = $longDist")
 
-            //4) Add to last point registered
+            //2.4) Add to last point registered
             val pointLat  = firstsPoint[nbPoint].first.toDouble() + latDist
             val pointLong = firstsPoint[nbPoint].second.toDouble() + longDist
 
@@ -108,6 +104,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         }
 
         firstsPoint.add(Pair(userLocation.latitude.toString(), userLocation.longitude.toString()))
+
         Log.d("maps", "Wp 3 -> ${firstsPoint[3].first} : ${firstsPoint[3].second}")
         return firstsPoint
     }
@@ -137,6 +134,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             //3) Send result to map activity
             val intent = Intent()
             intent.putExtra(MapActivity.WAYPOINTS, result)
+            intent.putExtra(MapActivity.USER_DETAILS, userDetails)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
