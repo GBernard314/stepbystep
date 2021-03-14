@@ -15,7 +15,6 @@ import fr.yapagi.stepbystep.R
 import fr.yapagi.stepbystep.databinding.ActivityRoutingBinding
 import fr.yapagi.stepbystep.map.MapActivity
 import fr.yapagi.stepbystep.tools.Tools
-import kotlin.math.abs
 import kotlin.random.Random
 
 @SuppressLint("LogNotTimber")
@@ -107,7 +106,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
         Log.d("maps", "Wp 3 -> ${firstsPoint[3].first} : ${firstsPoint[3].second}")
         return firstsPoint
-    }
+    } //Generate waypoints according to user parameters
     private fun sendData() {
         if(isDataValidated()){
             //1) Ask for path details
@@ -138,7 +137,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
-    }
+    }                                                                                                //Send data back to mapActivity
 
 
 
@@ -148,7 +147,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
         //1) Init activities map with METs value
         activities[0]  = ActivityDetail("Normal walking (~5.5km/h)",        4.3F,  5.5F)
-        activities[1]  = ActivityDetail("Normal running (~9.5km/h)",        9.8F,  9.5F)
+        activities[1]  = ActivityDetail("Normal running (~8km/h)",          8.3F,  8.0F)
         activities[2]  = ActivityDetail("Walking with backpack",            7.0F,  5.5F)
         activities[3]  = ActivityDetail("Climbing hills",                   6.3F,  5.5F)
         activities[4]  = ActivityDetail("Climbing hills with backpack",     7.3F,  5.5F)
@@ -157,11 +156,11 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         activities[7]  = ActivityDetail("Fast walking (~6.5km/h)",          5.0F,  6.5F)
         activities[8]  = ActivityDetail("Very fast walking (~8km/h)",       8.3F,  8.0F)
         activities[9]  = ActivityDetail("Walking the dog",                  3.0F,  5.5F)
-        activities[10] = ActivityDetail("Very slow running (~6.5km/h)",     6.0F,  6.5F)
-        activities[11] = ActivityDetail("Slow running (~8km/h)",            8.3F,  8.0F)
-        activities[12] = ActivityDetail("Little fast running (~11km/h)",    11.0F, 11.0F)
-        activities[13] = ActivityDetail("Fast running (~13km/h)",           11.8F, 13.0F)
-        activities[14] = ActivityDetail("Very fast running (~14.5km/h)",    12.8F, 14.5F)
+        activities[10] = ActivityDetail("slow running (~6.5km/h)",          6.0F,  6.5F)
+        activities[11]  = ActivityDetail("Little fast running (~9.5km/h)",  9.8F,  9.5F)
+        activities[12] = ActivityDetail("fast running (~11km/h)",           11.0F, 11.0F)
+        activities[13] = ActivityDetail("Very Fast running (~13km/h)",      11.8F, 13.0F)
+        activities[14] = ActivityDetail("Super fast running (~14.5km/h)",   12.8F, 14.5F)
         activities[15] = ActivityDetail("Extremely fast running (~16km/h)", 14.5F, 16.0F)
         activitySelected = activities.getValue(0) //Init default activity
 
@@ -182,7 +181,7 @@ class RoutingActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         activitySelected = activities.getValue(id)
     } //Update activity selected when switch are used
     private fun loadUI(){
-        binding.rHeightInput.visibility    = if(!isLiteInfoSelected)      View.VISIBLE else View.GONE
+        binding.rHeightInput.visibility   = if(!isLiteInfoSelected)       View.VISIBLE else View.GONE
         binding.rCalorieInput.visibility  = if(!isDistanceMethodSelected) View.VISIBLE else View.GONE
         binding.rDistanceInput.visibility = if(isDistanceMethodSelected)  View.VISIBLE else View.GONE
     }                                                                       //Display input according to user method and info choices

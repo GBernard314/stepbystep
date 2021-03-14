@@ -50,7 +50,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
     private var navigationMapRoute: NavigationMapRoute? = null
     private var roads: ArrayList<DirectionsRoute> = ArrayList()
     private var pathSettings = PathSettings(0, 0f, 0f, ArrayList())
-    private var userDetails = UserDetails(0, 0, 0, ActivityDetail("", 0f, 0f), false, false, 0f, 0)
+    private var userDetails = UserDetails(
+            0,
+            0,
+            0,
+            ActivityDetail("", 0f, 0f),
+            false,
+            false,
+            0f,
+            0
+    )
 
 
 
@@ -111,10 +120,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
             locationComponent.isLocationComponentEnabled = true
             locationComponent.cameraMode = CameraMode.TRACKING
             locationComponent.renderMode = RenderMode.COMPASS
+
         } else { //Request permission
             permissionsManager = PermissionsManager(this)
             permissionsManager.requestLocationPermissions(this)
         }
+
+        zoomOnUser()
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -215,24 +227,26 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
         //2) Display road
         navigationMapRoute!!.addRoutes(roads)
 
-        //3) Save roads data
+        //3) Display data on screen
+        calculDisplayData()
+        displayInfo()
+
+        zoomOnUser()
+    }
+    private fun calculDisplayData(){
         val tools = Tools()
         pathSettings.calorie = 0
         pathSettings.distance = 0f
         pathSettings.activityTime = 0f
-
         userDetails.distance = 0f
         for(road in roads){
-
-            //Update user details with real information generated
             userDetails.distance += road.distance()!!.toFloat()
-
             pathSettings.distance += road.distance()!!.toFloat()
             pathSettings.activityTime += road.duration()!!.toFloat()
         }
-
         pathSettings.calorie += tools.distanceToCalories(userDetails).calorie
-
+    }
+    private fun displayInfo(){
         binding.mActivityTimeText.visibility = View.VISIBLE
         binding.mActivityTimeText.text       = "${pathSettings.activityTime/100} min"
 
@@ -241,38 +255,36 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
 
         binding.mDistanceText.visibility     = View.VISIBLE
         binding.mDistanceText.text           = "${pathSettings.distance/1000} km"
-
-        zoomOnUser()
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if(requestCode == FIND_PATH_CODE && data?.getSerializableExtra(WAYPOINTS) != null) {
-            val pathSettings = data.getSerializableExtra(WAYPOINTS) as PathSettings
+            val pathGenerated = data.getSerializableExtra(WAYPOINTS) as PathSettings
             this.userDetails = data.getSerializableExtra(USER_DETAILS) as UserDetails
 
             //1) Reset overlay
             binding.map.invalidate()
             mapboxMap.clear()
 
-            //2) Get routes
-            if(pathSettings.waypoints.size > 1){
-                val titles = ArrayList<String>()
-                titles.add("Départ/Arrivé")
-                titles.add("1")
-                titles.add("2")
-                for(numWaypoint in 0..2){
-                    val wp = LatLng(pathSettings.waypoints[numWaypoint].first.toDouble(), pathSettings.waypoints[numWaypoint].second.toDouble())
-                    mapboxMap.addMarker(MarkerOptions().position(wp).title(titles[numWaypoint]))
+            //2) Draw road
+            drawRoads(pathGenerated)
+        }
+    }
+    private fun drawRoads(pathGenerated: PathSettings){
+        if(pathGenerated.waypoints.size > 1){
+            val titles = arrayOf("Départ/Arrivé", "1", "2")
+            for(numWaypoint in 0..2){
+                val wp = LatLng(pathGenerated.waypoints[numWaypoint].first.toDouble(), pathGenerated.waypoints[numWaypoint].second.toDouble())
+                mapboxMap.addMarker(MarkerOptions().position(wp).title(titles[numWaypoint]))
 
-                    val latStartPoint  = pathSettings.waypoints[numWaypoint].first.toDouble()
-                    val longStartPoint = pathSettings.waypoints[numWaypoint].second.toDouble()
+                val latStartPoint  = pathGenerated.waypoints[numWaypoint].first.toDouble()
+                val longStartPoint = pathGenerated.waypoints[numWaypoint].second.toDouble()
 
-                    val latFinalPoint  = pathSettings.waypoints[numWaypoint+1].first.toDouble()
-                    val longFinalPoint = pathSettings.waypoints[numWaypoint+1].second.toDouble()
+                val latFinalPoint  = pathGenerated.waypoints[numWaypoint+1].first.toDouble()
+                val longFinalPoint = pathGenerated.waypoints[numWaypoint+1].second.toDouble()
 
-                    getRoute(Point.fromLngLat(longStartPoint, latStartPoint), Point.fromLngLat(longFinalPoint, latFinalPoint))
-                }
+                getRoute(Point.fromLngLat(longStartPoint, latStartPoint), Point.fromLngLat(longFinalPoint, latFinalPoint))
             }
         }
     }
@@ -283,7 +295,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
         lateinit var mapboxMap: MapboxMap
         const val FIND_PATH_CODE = 0
         const val WAYPOINTS      = "waypoints"
-        const val USER_DETAILS      = "user_details"
+        const val USER_DETAILS   = "user_details"
 
         @SuppressLint("MissingPermission")
         fun getCurrentLocation(): LatLng {

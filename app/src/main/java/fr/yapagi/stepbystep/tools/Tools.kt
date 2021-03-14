@@ -36,7 +36,6 @@ class Tools {
 
     //DISTANCE / LAT//
     fun distanceToLat(distance: Float): Double {
-        //Latitude: 1 deg = 110.574 km
         return distance * (1/110.574)
     }
     fun distanceToLong(distance: Float, latitude: Double): Double {
