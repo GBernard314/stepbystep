@@ -12,4 +12,8 @@
     <string name="connect">Se connecter</string>
     <string name="login">Vous avez déjà un compte</string>
     <string name="sign_in">Vous navez pas de compte</string>
+    <string name="timer_default_time">00:00:00</string>
+    <string name="timer_play"><![CDATA[>]]></string>
+    <string name="timer_stop">||</string>
+    <string name="timer_restart">O</string>
 </resources>

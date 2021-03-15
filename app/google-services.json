@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "201245907853",
+    "firebase_url": "https://stepbystep-4a7a7-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "stepbystep-4a7a7",
+    "storage_bucket": "stepbystep-4a7a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201245907853:android:ffe4e7c6ce9fd254af7bc4",
+        "android_client_info": {
+          "package_name": "fr.yapagi.stepbystep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "201245907853-8b04arj8vmogeqctff4icnutqbk58h73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrDsJWRdBxRB2pIw1ooAXlLAhszhXopT4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "201245907853-8b04arj8vmogeqctff4icnutqbk58h73.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

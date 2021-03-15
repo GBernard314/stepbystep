@@ -12,6 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StepByStep">
         <activity android:name=".GyroscopeActivity"></activity>
+        <activity android:name=".DashboardActivity"></activity>
+        <activity android:name=".timer.TimerActivity"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
