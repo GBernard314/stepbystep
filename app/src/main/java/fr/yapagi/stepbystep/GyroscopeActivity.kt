@@ -10,9 +10,12 @@ import android.hardware.SensorEventListener;
 import android.widget.Toast
 import fr.yapagi.stepbystep.databinding.ActivityGyroscopeBinding;
 import androidx.core.content.getSystemService
+import fr.yapagi.stepbystep.databinding.ActivityDashboardBinding
+
 //import fr.yapagi.stepbystep.R.id.step_number
 
 private lateinit var binding: ActivityGyroscopeBinding;
+private lateinit var binding_act: ActivityDashboardBinding;
 
 class GyroscopeActivity : AppCompatActivity(), SensorEventListener {
 
@@ -27,7 +30,8 @@ class GyroscopeActivity : AppCompatActivity(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGyroscopeBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding_act = ActivityDashboardBinding.inflate(layoutInflater)
+        setContentView(binding_act.root)
         //setContentView(R.layout.activity_gyroscope)
         this.sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
@@ -48,17 +52,17 @@ class GyroscopeActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        sensorManager!!.unregisterListener(gyroEventListener)
-    }
 
     override fun onSensorChanged(event: SensorEvent?) {
         if(running) {
             numberOfSteps = event!!.values[0]
             var steps = numberOfSteps.toInt()
-            binding.stepsNumber.text = ("$steps")
+            binding_act.nbSteps.text = ("$steps")
         }
+    }
+    override fun onPause() {
+        super.onPause()
+        sensorManager!!.unregisterListener(gyroEventListener)
     }
 
     /*private fun resetSteps() {
