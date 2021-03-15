@@ -1,8 +1,14 @@
 package fr.yapagi.stepbystep
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.github.mikephil.charting.charts.BarChart
@@ -16,12 +22,47 @@ import fr.yapagi.stepbystep.timer.TimerActivity
 private lateinit var binding: ActivityDashboardBinding;
 
 
-class DashboardActivity : AppCompatActivity() {
+class DashboardActivity : AppCompatActivity(), SensorEventListener {
+    /**
+     * for gyroscope
+     */
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
+    private var sensorManager: SensorManager? = null
+    lateinit var gyroEventListener: SensorEventListener
+    private var numberOfSteps = 0f
+    private var running = true
+
+    override fun onResume() {
+        super.onResume()
+        running = true
+        val gyroSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+
+        if(gyroSensor == null) {
+            Toast.makeText(this,"Il n'y a pas de gyroscope sur cet appareil", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            sensorManager?.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_UI)
+        }
+    }
+
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if(running) {
+            numberOfSteps = event!!.values[0]
+            var steps = numberOfSteps.toInt()
+            binding.nbSteps.text = ("$steps")
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater);
         //setContentView(R.layout.activity_dashboard)
         setContentView(binding.root)
+        this.sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
         /************************************
          *                                  *
