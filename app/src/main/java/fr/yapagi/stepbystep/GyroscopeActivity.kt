@@ -22,7 +22,7 @@ class GyroscopeActivity : AppCompatActivity(), SensorEventListener {
     //lateinit var gyroSensor: Sensor
     lateinit var gyroEventListener: SensorEventListener
     private var numberOfSteps = 0f
-    private var running = false
+    private var running = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +55,8 @@ class GyroscopeActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if(running) {
-            val numberOfSteps = event!!.values[0]
-            val steps = numberOfSteps.toInt()
+            numberOfSteps = event!!.values[0]
+            var steps = numberOfSteps.toInt()
             binding.stepsNumber.text = ("$steps")
         }
     }
