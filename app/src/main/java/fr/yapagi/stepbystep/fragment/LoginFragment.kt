@@ -43,7 +43,7 @@ class LoginFragment : Fragment() {
                 startActivity(intent)
             }
         }
-        
+
         super.onViewCreated(view, savedInstanceState)
     }
 }

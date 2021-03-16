@@ -82,7 +82,8 @@
         android:ems="10"
         android:hint="@string/adresse"
         android:inputType="textPostalAddress"
-        android:padding="15dp" />
+        android:padding="15dp"
+        android:textSize="15sp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

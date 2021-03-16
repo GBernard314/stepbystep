@@ -74,6 +74,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.super_rabbit.wheel_picker:NumberPicker:1.0.1'
     implementation 'com.afollestad:vvalidator:0.2.2'
+    implementation 'com.google.android.material:material:1.0.0'
     //implementation 'com.github.philjay:mpandroidchart:aea2ff3417'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
