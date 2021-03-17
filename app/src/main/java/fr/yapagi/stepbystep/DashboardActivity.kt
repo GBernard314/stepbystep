@@ -17,11 +17,9 @@ import com.github.mikephil.charting.data.PieEntry
 import fr.yapagi.stepbystep.databinding.ActivityDashboardBinding
 import fr.yapagi.stepbystep.map.MapActivity
 import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import fr.yapagi.stepbystep.databinding.ActivityDashboardBinding
 import fr.yapagi.stepbystep.timer.TimerActivity
 import fr.yapagi.stepbystep.tools.Tools
 
@@ -191,8 +189,9 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val tmpMap = findViewById<CardView>(R.id.activity)
+        val tmpMap = findViewById<CardView>(R.id.cardView)
         tmpMap.setOnClickListener{
+            var tools = Tools()
             if(tools.isPermissionAndProvidersEnable(this)){
                 val intent = Intent(this, MapActivity::class.java)
                 startActivity(intent)
@@ -200,7 +199,7 @@ class DashboardActivity : AppCompatActivity() {
         }
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TMP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     }
-}
+
 
     fun activityTracking(listDataSet: List<BarDataSet>, barChart: BarChart, state: Int): Int{
         // Changing name of card
