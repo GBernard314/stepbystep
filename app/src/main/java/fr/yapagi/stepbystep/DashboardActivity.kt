@@ -1,5 +1,6 @@
 package fr.yapagi.stepbystep
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -8,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.MenuItem
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -25,6 +27,7 @@ import fr.yapagi.stepbystep.databinding.ActivityDashboardBinding
 import fr.yapagi.stepbystep.map.MapActivity
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
+import androidx.core.app.ActivityCompat
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.AxisBase
@@ -79,6 +82,19 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
         binding = ActivityDashboardBinding.inflate(layoutInflater);
         //setContentView(R.layout.activity_dashboard)
         setContentView(binding.root)
+
+
+        /*
+        if(ActivityCompat.checkSelfPermission(this.applicationContext, android.Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED){​​​​​
+            Toast.makeText(this.applicationContext,"Please, authorize location & data permission to load your position", Toast.LENGTH_SHORT).show()
+            ActivityCompat.requestPermissions(this as Activity,arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION),1)
+        }​​​​​
+        */
+
+        // TODO check if permisison exists
+        ActivityCompat.requestPermissions(this as Activity,arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION),1)
+
+
         this.sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
         /************************************
