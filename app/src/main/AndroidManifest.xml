@@ -22,14 +22,14 @@
         android:theme="@style/Theme.StepByStep"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".BaseActivity"></activity>
+        <activity android:name=".BaseActivity" />
         <activity android:name=".routing.RoutingActivity" />
         <activity android:name=".map.MapActivity" />
         <activity android:name=".DashboardActivity" />
         <activity android:name=".timer.TimerActivity" />
         <activity android:name=".AccountActivity" />
         <activity android:name=".AuthenticationActivity" />
-        <activity android:theme="@style/Theme.StepByStep">
+        android:theme="@style/Theme.StepByStep"
         <activity android:name=".GyroscopeActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>

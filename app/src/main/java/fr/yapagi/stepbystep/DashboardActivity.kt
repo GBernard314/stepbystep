@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import android.os.Bundle
 import android.view.MenuItem
 import android.content.pm.PackageManager
 import android.hardware.Sensor
@@ -18,7 +17,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -28,18 +26,13 @@ import fr.yapagi.stepbystep.map.MapActivity
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
 import androidx.core.app.ActivityCompat
-import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import fr.yapagi.stepbystep.databinding.ActivityDashboardBinding
 import fr.yapagi.stepbystep.timer.TimerActivity
 import fr.yapagi.stepbystep.tools.Tools
 
 private lateinit var binding: ActivityDashboardBinding;
 
-private lateinit var binding: ActivityDashboardBinding;
 
 
 class DashboardActivity : AppCompatActivity(), SensorEventListener {
@@ -126,7 +119,7 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
         /*
             activity tracking
          */
-        val barChart: BarChart = findViewById(R.id.activity);
+        var barChart: BarChart = findViewById(R.id.activity);
 
         val steps: ArrayList<BarEntry> = ArrayList()
         steps.add( BarEntry(0f, 1000f));
@@ -239,7 +232,6 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
                 actDisplay = activityTracking(listBarDataSet, barChart, actDisplay)
             }
         }
-        val barChart: BarChart = findViewById(R.id.activity);
 
         val entries: ArrayList<BarEntry> = ArrayList()
         entries.add( BarEntry(0f, 1000f));

@@ -27,5 +27,6 @@
     <color name="od_grey_dark">#4b5263</color>
     <color name="purple_200">#8D3B9B</color>
     <color name="purple_700">#8D3B9B</color>
+    <color name="purple_500">#8D3B9B</color>
     <color name="teal_200">#4491AA</color>
 </resources>
