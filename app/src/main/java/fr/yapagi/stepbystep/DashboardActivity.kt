@@ -17,6 +17,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -33,6 +35,43 @@ import fr.yapagi.stepbystep.tools.Tools
 
 private lateinit var binding: ActivityDashboardBinding;
 
+
+
+class DashboardActivity : AppCompatActivity(), SensorEventListener {
+    /**
+     * for gyroscope
+     */
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
+    private var sensorManager: SensorManager? = null
+    lateinit var gyroEventListener: SensorEventListener
+    private var numberOfSteps = 0f
+    private var running = true
+
+    override fun onResume() {
+        super.onResume()
+        running = true
+        val gyroSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+
+        if(gyroSensor == null) {
+            Toast.makeText(this,"Il n'y a pas de gyroscope sur cet appareil", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            sensorManager?.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_UI)
+        }
+    }
+
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if(running) {
+            numberOfSteps = event!!.values[0]
+            var steps = numberOfSteps.toInt()
+            binding.nbSteps.text = ("$steps")
+        }
+    }
+
+private lateinit var binding: ActivityDashboardBinding;
 
 
 class DashboardActivity : AppCompatActivity(), SensorEventListener {
@@ -297,7 +336,6 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
         }
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TMP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     }
-
 
     fun activityTracking(listDataSet: List<BarDataSet>, barChart: BarChart, state: Int): Int{
         // Changing name of card
