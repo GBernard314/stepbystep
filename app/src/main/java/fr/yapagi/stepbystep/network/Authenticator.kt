@@ -8,7 +8,7 @@ import com.google.firebase.ktx.Firebase
 import fr.yapagi.stepbystep.data.Goal
 import fr.yapagi.stepbystep.data.User
 
-class Authenticator(private val activity: Activity) {
+class Authenticator() {
     companion object{
         private const val TAG = "AUTHENTICATOR"
         private var current_user: User? = null
@@ -35,39 +35,42 @@ class Authenticator(private val activity: Activity) {
     /**
      * This method registers a new user in firebase authenticator
      */
-    fun register(uname: String, email: String, password: String){
+    fun register(fname: String, lname: String, uname: String, email: String, password: String, listener: DataListener){
+        logout()
         val db = Database()
 
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(activity){ task ->
-                if(task.isSuccessful){
-                    //User created successfully
-                    Log.d(TAG, "register::successfully_created_user")
-                    val newUser = User(uname, email)
-                    auth.currentUser?.uid?.let { db.updateUser(it, newUser) }
-                    login(email, password)
-                }else{
-                    //User could not be created
-                    Log.d(TAG, "register::failed_user_creation", task.exception)
-                }
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{ task ->
+            if(task.isSuccessful){
+                //User created successfully
+                Log.d(TAG, "register::successfully_created_user")
+                val newUser = User(fname, lname, uname, email)
+                auth.currentUser?.uid?.let { db.updateUser(it, newUser) }
+                login(email, password, listener)
+            }else{
+                //User could not be created
+                Log.d(TAG, "register::failed_user_creation", task.exception)
+                listener.onFailure(task.exception.toString())
             }
+        }
     }
 
     /**
      * This method logs an user into the Firebase authenticator system
      */
-    fun login(email: String, password: String){
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(activity){task ->
-                if(task.isSuccessful){
-                    //User successfully logged in
-                    Log.d(TAG, "login::successfully_logged_user_in")
-                    updateLoggedUser()
-                }else{
-                    //Login failed
-                    Log.d(TAG, "login::user_could_not_login", task.exception)
-                }
+    fun login(email: String, password: String, listener: DataListener){
+        logout()
+        //Log.d(TAG, "login::"+email+"_"+password)
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener{task ->
+            if(task.isSuccessful){
+                //User successfully logged in
+                Log.d(TAG, "login::successfully_logged_user_in")
+                updateLoggedUser(listener)
+            }else{
+                //Login failed
+                Log.d(TAG, "login::user_could_not_login", task.exception)
+                listener.onFailure(task.exception.toString())
             }
+        }
     }
 
     fun logout(){
@@ -77,7 +80,7 @@ class Authenticator(private val activity: Activity) {
     /**
      * This method updates the user attribute of this class using Firebase authenticator
      */
-    private fun updateLoggedUser(){
+    private fun updateLoggedUser(listener: DataListener){
         val db = Database()
         auth.currentUser?.uid?.let { db.getUser(it, object: DataListener{
             override fun onStart() {
@@ -89,6 +92,7 @@ class Authenticator(private val activity: Activity) {
                 data?.let{user ->
                     current_user = user as User
                 }
+                listener.onSuccess(current_user)
             }
 
             override fun onFailure(error: String){

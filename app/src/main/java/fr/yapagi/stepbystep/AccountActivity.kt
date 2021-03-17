@@ -22,7 +22,6 @@ class AccountActivity : AppCompatActivity() {
 
         binding.viewPager.adapter = AccountActivityAdapter(this, supportFragmentManager)
         binding.viewPager.setPageTransformer(DepthPageTransformer())
-
     }
 
     @RequiresApi(Build.VERSION_CODES.N)

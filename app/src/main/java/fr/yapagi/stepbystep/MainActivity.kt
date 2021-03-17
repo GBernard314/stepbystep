@@ -22,9 +22,9 @@ class MainActivity : AppCompatActivity() {
 
         //Firebase stuff starts here
         FirebaseApp.initializeApp(this)
-        val auth = Authenticator(this)
+        //val auth = Authenticator(this)
         //Logs user in as "JDoe" (Dummy values for test purposes)
-        auth.login("john.doe@gmail.com", "password")
+        //auth.login("john.doe@gmail.com", "password")
 
         //val goal = Goal(auth.getUID(), 80.0F, 1)
         //val db = Database()
