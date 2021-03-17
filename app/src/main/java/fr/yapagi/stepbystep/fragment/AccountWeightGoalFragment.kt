@@ -76,7 +76,6 @@ class AccountWeightGoalFragment : Fragment() {
     }
 
     override fun onStop() {
-        println("Writting Weight Goal")
         val sharedPreferences = activity?.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE)
         sharedPreferences?.edit()?.putString(USER_WEIGHT, binding.numberPicker.getCurrentItem())?.commit()
         super.onStop()

@@ -23,6 +23,6 @@ class MainActivity : AppCompatActivity() {
         auth.login("john.doe@gmail.com", "password")
         //End of firebase stuff
 
-        startActivity(Intent(this, DashboardActivity::class.java))
+        startActivity(Intent(this, AuthenticationActivity::class.java))
     }
 }

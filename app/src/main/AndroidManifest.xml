@@ -20,14 +20,13 @@
         android:theme="@style/Theme.StepByStep"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity android:name=".BaseActivity"></activity>
         <activity android:name=".routing.RoutingActivity" />
-        <activity
-            android:name=".map.MapActivity"
-            android:label="@string/title_activity_path_finder" />
+        <activity android:name=".map.MapActivity" />
         <activity android:name=".DashboardActivity" />
         <activity android:name=".timer.TimerActivity" />
-        <activity android:name=".AccountActivity">
-        <activity android:name=".AuthenticationActivity">
+        <activity android:name=".AccountActivity" />
+        <activity android:name=".AuthenticationActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -7,6 +7,7 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -14,14 +15,17 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import fr.yapagi.stepbystep.databinding.ActivityDashboardBinding
 import fr.yapagi.stepbystep.map.MapActivity
 import fr.yapagi.stepbystep.timer.TimerActivity
 import fr.yapagi.stepbystep.tools.Tools
 
+private lateinit var binding : ActivityDashboardBinding
 class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard)
+        binding = ActivityDashboardBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val pieChart = findViewById<PieChart>(R.id.chart)
         val NoOfEmp = ArrayList<PieEntry>()
@@ -55,6 +59,25 @@ class DashboardActivity : AppCompatActivity() {
         pieChart.highlightValues(null)
         pieChart.invalidate()
         pieChart.animateXY(1000, 1000)
+
+        binding.bottomNavigation.setOnNavigationItemSelectedListener { item: MenuItem ->
+            when(item.itemId){
+                R.id.page_1 -> {
+                    val intent = Intent(applicationContext, DashboardActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.page_2 -> {
+                    val intent = Intent(applicationContext, DashboardActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.page_3 -> {
+                    val intent = Intent(applicationContext, DashboardActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+            true
+        }
+
 
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TMP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         val tmpTimer = findViewById<CardView>(R.id.cardView6)

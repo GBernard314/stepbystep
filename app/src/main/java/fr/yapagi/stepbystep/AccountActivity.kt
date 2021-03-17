@@ -23,24 +23,6 @@ class AccountActivity : AppCompatActivity() {
         binding.viewPager.adapter = AccountActivityAdapter(this, supportFragmentManager)
         binding.viewPager.setPageTransformer(DepthPageTransformer())
 
-
-        binding.bottomNavigation.setOnNavigationItemSelectedListener { item: MenuItem ->
-            when(item.itemId){
-                R.id.page_1 -> {
-                    val intent = Intent(applicationContext, DashboardActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.page_2 -> {
-                    val intent = Intent(applicationContext, DashboardActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.page_3 -> {
-                    val intent = Intent(applicationContext, DashboardActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-            true
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)

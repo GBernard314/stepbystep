@@ -81,6 +81,7 @@ class AccountWeightFragment : Fragment() {
     override fun onStop() {
         println("Weight")
         val sharedPreferences = activity?.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE)
+        println("Weight : " + binding.numberPicker.getCurrentItem())
         sharedPreferences?.edit()?.putString(USER_WEIGHT, binding.numberPicker.getCurrentItem())?.commit()
         super.onStop()
     }
