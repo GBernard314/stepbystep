@@ -70,7 +70,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsListener
         setContentView(binding.root)
 
         //MAP
-        Mapbox.getInstance(this, R.string.mapbox_access_token.toString())
         binding.map.onCreate(savedInstanceState)
         binding.map.getMapAsync { mapboxMap ->
             MapActivity.mapboxMap = mapboxMap
