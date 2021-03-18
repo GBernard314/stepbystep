@@ -29,7 +29,6 @@
         <activity android:name=".timer.TimerActivity" />
         <activity android:name=".AccountActivity" />
         <activity android:name=".AuthenticationActivity" />
-        android:theme="@style/Theme.StepByStep"
         <activity android:name=".GyroscopeActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
