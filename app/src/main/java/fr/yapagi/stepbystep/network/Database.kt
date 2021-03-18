@@ -105,6 +105,42 @@ class Database {
         runsDb.child(uid).setValue(run)
     }
 
+    fun getRun(uid: String, listener: DataListener){
+        val runsDb = database.getReference(RUNS)
+        listener.onStart()
+        runsDb.child(uid).addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                listener.onSuccess(dataSnapshot.getValue<Run>())
+            }
+
+            override fun onCancelled(error: DatabaseError){
+                listener.onFailure(error.toString())
+            }
+        })
+    }
+
+    fun getAllRuns(listener: DataListener){
+        val runsDb = database.getReference(RUNS)
+        listener.onStart()
+        runsDb.addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val runsJson: Map<String, Any>? = snapshot.getValue<HashMap<String, Any>>()
+                val runs: MutableMap<String, Run>? = mutableMapOf()
+                if(runsJson != null){
+                    for (run in runsJson){
+                        val newRun: Run = Gson().fromJson(Gson().toJson(run.value), Run::class.java)
+                        runs?.set(run.key, newRun)
+                    }
+                }
+                listener.onSuccess(runs)
+            }
+
+            override fun onCancelled(error: DatabaseError){
+                listener.onFailure("Failed to load runs")
+            }
+        })
+    }
+
     fun getAllGoals(listener: DataListener){
         val goalsDb = database.getReference(GOALS)
         listener.onStart()

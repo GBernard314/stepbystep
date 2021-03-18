@@ -2,8 +2,9 @@ package fr.yapagi.stepbystep.data
 import java.io.Serializable
 
 class Run(
-    val userId: String,
+    val user_id: String,
     val calories: Int,
-    val activityTime: Float,
-    val distance: Float
+    val heart_rate: Int,
+    val steps_goal: Int,
+    val steps: Int
 ): Serializable {}

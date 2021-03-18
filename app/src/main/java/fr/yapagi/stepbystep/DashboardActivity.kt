@@ -28,6 +28,7 @@ import fr.yapagi.stepbystep.map.MapActivity
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import fr.yapagi.stepbystep.data.Run
 import fr.yapagi.stepbystep.data.User
 import fr.yapagi.stepbystep.network.Authenticator
 import fr.yapagi.stepbystep.network.DataListener
@@ -79,21 +80,6 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
         //setContentView(R.layout.activity_dashboard)
         setContentView(binding.root)
 
-        val auth = Authenticator()
-        val db = Database()
-        auth.getUID()?.let{
-            db.getUser(it, object: DataListener{
-                override fun onSuccess(data: Any?) {
-                    val user: User? = data as User?
-                    binding.userName.text = user?.username
-                }
-
-                override fun onStart() {}
-                override fun onFailure(error: String) {}
-
-            })
-        }
-
         /*
         if(ActivityCompat.checkSelfPermission(this.applicationContext, android.Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED){​​​​​
             Toast.makeText(this.applicationContext,"Please, authorize location & data permission to load your position", Toast.LENGTH_SHORT).show()
@@ -103,7 +89,6 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
 
         // TODO check if permisison exists
         ActivityCompat.requestPermissions(this as Activity,arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION),1)
-
 
         this.sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
@@ -127,39 +112,56 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
          */
         val NoOfStep = ArrayList<PieEntry>()
 
-
-        val walked = 5000.toFloat()
-        val goal = (15000 - walked)
-
-
-
-        /*
-            activity tracking
-         */
-        var barChart: BarChart = findViewById(R.id.activity);
-
+        var barChart: BarChart = findViewById(R.id.activity)
         val steps: ArrayList<BarEntry> = ArrayList()
-        steps.add( BarEntry(0f, 1000f));
-        steps.add( BarEntry(1f, 500f));
-        steps.add( BarEntry(2f, 564f))
-        steps.add( BarEntry(3f, 234f))
-        steps.add( BarEntry(4f, 700f))
-        steps.add( BarEntry(5f, 1500f))
-        steps.add( BarEntry(5f, 1500f))
-
         val calories: ArrayList<BarEntry> = ArrayList()
-        calories.add( BarEntry(0f, 10f));
-        calories.add( BarEntry(1f, 5f));
-        calories.add( BarEntry(2f, 5f))
-        calories.add( BarEntry(3f, 2f))
-        calories.add( BarEntry(4f, 7f))
-        calories.add( BarEntry(5f, 15f))
-        calories.add( BarEntry(5f, 15f))
-
-
         var listBarDataSet = listOf<BarDataSet>()
         listBarDataSet += BarDataSet(steps, "steps")
         listBarDataSet += BarDataSet(calories, "calories")
+
+        var walked: Float = 0F
+        var goal: Float = 0F
+
+        val auth = Authenticator()
+        val db = Database()
+        auth.getUID()?.let{
+            db.getUser(it, object: DataListener{
+                override fun onSuccess(data: Any?) {
+                    val user: User? = data as User?
+                    binding.userName.text = user?.username
+
+                    auth.loadRuns(object: DataListener{
+                        override fun onSuccess(data: Any?) {
+                            val runs = data as ArrayList<Run>
+                            val limit = if(runs.size >= 5){
+                                5
+                            }else{
+                                runs.size
+                            }
+
+                            for(i in 0..limit){
+                                steps.add( BarEntry(i.toFloat(), runs[runs.size-(i+1)].steps.toFloat()))
+                                calories.add( BarEntry(i.toFloat(), runs[runs.size-(i+1)].calories.toFloat()))
+                            }
+                            walked = runs[runs.size-1].steps.toFloat()
+                            goal = runs[runs.size-1].steps_goal.toFloat()
+
+                            binding.heartRateValue.text = runs[runs.size-1].heart_rate.toString()
+                            binding.calNb.text = runs[runs.size-1].calories.toString()
+                            binding.nbSteps.text = walked.toString()
+                        }
+
+                        override fun onStart() {}
+                        override fun onFailure(error: String) {}
+
+                    })
+                }
+
+                override fun onStart() {}
+                override fun onFailure(error: String) {}
+
+            })
+        }
 
 
         /************************************
@@ -177,7 +179,7 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
 
         NoOfStep.add(PieEntry(walked, "steps"))
         NoOfStep.add(PieEntry(goal, "needed"))
-        val dataSet = PieDataSet(NoOfStep, "Number Of Employees")
+        val dataSet = PieDataSet(NoOfStep, "Number Of Steps")
 
         dataSet.setColors(intArrayOf(R.color.od_blue, R.color.background_grey), applicationContext)
 
@@ -242,7 +244,7 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
                 Managing the change of data to display
              */
             if (actDisplay == 0){
-                val bardataset =  BarDataSet(steps, "steps")
+                val bardataset =  BarDataSet(steps, "Steps")
                 actDisplay = activityTracking(listBarDataSet, barChart, actDisplay)
             } else {
                 val bardataset =  BarDataSet(calories, "Calories");

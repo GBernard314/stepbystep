@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import fr.yapagi.stepbystep.data.Goal
+import fr.yapagi.stepbystep.data.Run
 import fr.yapagi.stepbystep.data.User
 
 class Authenticator() {
@@ -16,6 +17,7 @@ class Authenticator() {
 
     private var auth: FirebaseAuth = Firebase.auth
     var userGoal: Goal? = null
+    var userRuns: ArrayList<Run?> = arrayListOf()
 
     /**
      * A status variable to tell if someone is signed in or not
@@ -116,6 +118,25 @@ class Authenticator() {
 
     fun getCurrentUser(): User? {
         return current_user
+    }
+
+    fun loadRuns(listener: DataListener){
+        val db: Database = Database()
+        db.getAllRuns(object: DataListener{
+            override fun onSuccess(data: Any?){
+                data?.let{
+                    for(run in data as Map<String, Run>){
+                        if(run.value.user_id == getUID()){
+                            userRuns.add(run.value)
+                        }
+                    }
+                    listener.onSuccess(userRuns)
+                }
+            }
+
+            override fun onStart() {}
+            override fun onFailure(error: String) {}
+        })
     }
 
     fun loadGoal(){
