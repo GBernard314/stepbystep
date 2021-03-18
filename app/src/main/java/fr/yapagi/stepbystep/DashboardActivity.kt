@@ -155,85 +155,35 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
                                 binding.calNb.text = runs[runs.size-1].calories.toString()
                             }
 
+                            /*
+           Start of pie chart
+        */
 
-                            binding.nbSteps.text = walked.toString()
-                        }
+                            val pieChart = findViewById<PieChart>(R.id.chart)
 
-                        override fun onStart() {}
-                        override fun onFailure(error: String) {}
+                            NoOfStep.add(PieEntry(walked, "steps"))
+                            NoOfStep.add(PieEntry(goal, "needed"))
+                            val dataSet = PieDataSet(NoOfStep, "Number Of Steps")
 
-                    })
-                }
+                            dataSet.setColors(intArrayOf(R.color.od_blue, R.color.background_grey), applicationContext)
 
-                override fun onStart() {}
-                override fun onFailure(error: String) {}
+                            dataSet.setDrawIcons(false)
+                            dataSet.setDrawValues(false)
 
-            })
-        }
+                            val data = PieData(dataSet)
+                            data.setValueTextSize(11f)
+                            pieChart.setDrawEntryLabels(false)
+                            pieChart.setDrawMarkers(false)
+                            pieChart.legend.isEnabled = false
+                            pieChart.description.isEnabled = false
+                            pieChart.data = data
+                            pieChart.setDrawSlicesUnderHole(false)
+                            pieChart.holeRadius = 70.toFloat()
+                            pieChart.highlightValues(null)
+                            pieChart.invalidate()
+                            pieChart.animateXY(1000, 1000)
 
-
-        /************************************
-         *                                  *
-         *          Dummy data              *
-         *                                  *
-         ************************************/
-
-
-        /*
-            Start of pie chart
-         */
-
-        val pieChart = findViewById<PieChart>(R.id.chart)
-
-        NoOfStep.add(PieEntry(walked, "steps"))
-        NoOfStep.add(PieEntry(goal, "needed"))
-        val dataSet = PieDataSet(NoOfStep, "Number Of Steps")
-
-        dataSet.setColors(intArrayOf(R.color.od_blue, R.color.background_grey), applicationContext)
-
-        dataSet.setDrawIcons(false)
-        dataSet.setDrawValues(false)
-
-        val data = PieData(dataSet)
-        data.setValueTextSize(11f)
-        pieChart.setDrawEntryLabels(false)
-        pieChart.setDrawMarkers(false)
-        pieChart.legend.isEnabled = false
-        pieChart.description.isEnabled = false
-        pieChart.data = data
-        pieChart.setDrawSlicesUnderHole(false)
-        pieChart.holeRadius = 70.toFloat()
-        pieChart.highlightValues(null)
-        pieChart.invalidate()
-        pieChart.animateXY(1000, 1000)
-
-        binding.bottomNavigation.setOnNavigationItemSelectedListener { item: MenuItem ->
-            when(item.itemId){
-                R.id.page_1 -> {
-                    val intent = Intent(applicationContext, DashboardActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.page_2 -> {
-                    val intent = Intent(applicationContext, DashboardActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.page_3 -> {
-                    val intent = Intent(applicationContext, DashboardActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-            true
-        }
-        /*
-            End of pie chart
-         */
-
-
-
-
-
-
-        /*
+                            /*
             Start of bar chart
          */
 
@@ -304,6 +254,59 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
         /*
             End of bar chart
          */
+
+
+                            binding.nbSteps.text = walked.toString()
+                        }
+
+                        override fun onStart() {}
+                        override fun onFailure(error: String) {}
+
+
+
+                    })
+                }
+
+                override fun onStart() {}
+                override fun onFailure(error: String) {}
+
+            })
+        }
+
+
+        /************************************
+         *                                  *
+         *          Dummy data              *
+         *                                  *
+         ************************************/
+
+
+
+
+        binding.bottomNavigation.setOnNavigationItemSelectedListener { item: MenuItem ->
+            when(item.itemId){
+                R.id.page_1 -> {
+                    val intent = Intent(applicationContext, DashboardActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.page_2 -> {
+                    val intent = Intent(applicationContext, DashboardActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.page_3 -> {
+                    var tools = Tools()
+                    if(tools.isPermissionAndProvidersEnable(this)){
+                        val intent = Intent(this, MapActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+            }
+            true
+        }
+        /*
+            End of pie chart
+         */
+
 
 
 
