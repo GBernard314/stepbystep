@@ -139,15 +139,23 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
                                 runs.size
                             }
 
-                            for(i in 0..limit){
-                                steps.add( BarEntry(i.toFloat(), runs[runs.size-(i+1)].steps.toFloat()))
-                                calories.add( BarEntry(i.toFloat(), runs[runs.size-(i+1)].calories.toFloat()))
+                            if(runs.size == 0){
+                                walked = 0.toFloat()
+                                goal = 0.toFloat()
+                                binding.heartRateValue.text = "0"
+                                binding.calNb.text = "0"
+                            } else {
+                                walked = runs[runs.size - 1].steps.toFloat()
+                                goal = runs[runs.size - 1].steps_goal.toFloat()
+                                for(i in 0..limit){
+                                    steps.add( BarEntry(i.toFloat(), runs[runs.size-(i+1)].steps.toFloat()))
+                                    calories.add( BarEntry(i.toFloat(), runs[runs.size-(i+1)].calories.toFloat()))
+                                }
+                                binding.heartRateValue.text = runs[runs.size-1].heart_rate.toString()
+                                binding.calNb.text = runs[runs.size-1].calories.toString()
                             }
-                            walked = runs[runs.size-1].steps.toFloat()
-                            goal = runs[runs.size-1].steps_goal.toFloat()
 
-                            binding.heartRateValue.text = runs[runs.size-1].heart_rate.toString()
-                            binding.calNb.text = runs[runs.size-1].calories.toString()
+
                             binding.nbSteps.text = walked.toString()
                         }
 
