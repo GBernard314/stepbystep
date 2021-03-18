@@ -43,9 +43,17 @@ class Authenticator() {
             if(task.isSuccessful){
                 //User created successfully
                 Log.d(TAG, "register::successfully_created_user")
-                val newUser = User(fname, lname, uname, email)
-                auth.currentUser?.uid?.let { db.updateUser(it, newUser) }
-                login(email, password, listener)
+                val newUser = User(firstname = fname, lastname = lname, username = uname, email = email)
+                auth.currentUser?.uid?.let { db.updateUser(it, newUser, object: DataListener{
+                    override fun onSuccess(data: Any?) {
+                        login(email, password, listener)
+                    }
+
+                    override fun onStart() {}
+
+                    override fun onFailure(error: String) {}
+
+                }) }
             }else{
                 //User could not be created
                 Log.d(TAG, "register::failed_user_creation", task.exception)
@@ -104,6 +112,10 @@ class Authenticator() {
 
     fun getUID() : String? {
         return auth.currentUser?.uid
+    }
+
+    fun getCurrentUser(): User? {
+        return current_user
     }
 
     fun loadGoal(){

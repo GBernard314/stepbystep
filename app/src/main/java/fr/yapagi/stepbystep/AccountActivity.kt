@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.view.get
 import fr.yapagi.stepbystep.adapter.AccountActivityAdapter
 import fr.yapagi.stepbystep.databinding.ActivityAccountBinding
 import fr.yapagi.stepbystep.transformation.DepthPageTransformer

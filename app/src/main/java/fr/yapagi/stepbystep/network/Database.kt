@@ -21,9 +21,11 @@ class Database {
 
     private val database = Firebase.database(URL)
 
-    fun updateUser(uid: String, user: User){
+    fun updateUser(uid: String, user: User, listener: DataListener){
         val usersDb = database.getReference(USERS)
-        usersDb.child(uid).setValue(user)
+        usersDb.child(uid).setValue(user).addOnCompleteListener{
+            listener.onSuccess(user)
+        }
     }
 
     fun getUser(uid: String, listener: DataListener){

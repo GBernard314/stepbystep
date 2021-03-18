@@ -11,8 +11,12 @@ import androidx.annotation.RequiresApi
 import com.super_rabbit.wheel_picker.WheelAdapter
 import fr.yapagi.stepbystep.AccountActivity
 import fr.yapagi.stepbystep.R
+import fr.yapagi.stepbystep.data.User
 import fr.yapagi.stepbystep.databinding.FragmentAccountSizeBinding
 import fr.yapagi.stepbystep.databinding.FragmentAccountWeightBinding
+import fr.yapagi.stepbystep.network.Authenticator
+import fr.yapagi.stepbystep.network.DataListener
+import fr.yapagi.stepbystep.network.Database
 
 private lateinit var binding : FragmentAccountWeightBinding
 

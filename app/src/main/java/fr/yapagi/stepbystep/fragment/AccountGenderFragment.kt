@@ -11,7 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import fr.yapagi.stepbystep.AccountActivity
+import fr.yapagi.stepbystep.data.User
 import fr.yapagi.stepbystep.databinding.FragmentAccountGenderBinding
+import fr.yapagi.stepbystep.network.Authenticator
+import fr.yapagi.stepbystep.network.DataListener
+import fr.yapagi.stepbystep.network.Database
 
 
 private lateinit var binding: FragmentAccountGenderBinding

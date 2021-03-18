@@ -32,5 +32,6 @@ class MainActivity : AppCompatActivity() {
         //End of firebase stuff
 
         startActivity(Intent(this, AuthenticationActivity::class.java))
+        finish()
     }
 }
