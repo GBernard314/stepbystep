@@ -211,19 +211,18 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
         }
 
         val entries: ArrayList<BarEntry> = ArrayList()
-        entries.add( BarEntry(0f, 1000f));
-        entries.add( BarEntry(1f, 500f));
-        entries.add( BarEntry(2f, 564f))
-        entries.add( BarEntry(3f, 234f))
-        entries.add( BarEntry(4f, 700f))
-        entries.add( BarEntry(5f, 1500f))
+        entries.add( BarEntry(0f, 1f));
+        entries.add( BarEntry(1f, 1f));
+        entries.add( BarEntry(2f, 1f))
+        entries.add( BarEntry(3f, 1f))
+        entries.add( BarEntry(4f, 1f))
+        entries.add( BarEntry(5f, 1f))
 
-        val bardataset =  BarDataSet(entries, "Cells");
+        val bardataset =  BarDataSet(steps, "Cells");
         val days = ArrayList<String>()
         days.add("Mon")
         days.add("Tue")
         days.add("Wed")
-        val act7 = listOf<Float>(1000f, 500f, 465f)
 
         val labels = ArrayList<String>()
         labels.add("2016");
