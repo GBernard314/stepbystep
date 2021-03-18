@@ -28,6 +28,10 @@ import fr.yapagi.stepbystep.map.MapActivity
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import fr.yapagi.stepbystep.data.User
+import fr.yapagi.stepbystep.network.Authenticator
+import fr.yapagi.stepbystep.network.DataListener
+import fr.yapagi.stepbystep.network.Database
 import fr.yapagi.stepbystep.timer.TimerActivity
 import fr.yapagi.stepbystep.tools.Tools
 
@@ -75,6 +79,20 @@ class DashboardActivity : AppCompatActivity(), SensorEventListener {
         //setContentView(R.layout.activity_dashboard)
         setContentView(binding.root)
 
+        val auth = Authenticator()
+        val db = Database()
+        auth.getUID()?.let{
+            db.getUser(it, object: DataListener{
+                override fun onSuccess(data: Any?) {
+                    val user: User? = data as User?
+                    binding.userName.text = user?.username
+                }
+
+                override fun onStart() {}
+                override fun onFailure(error: String) {}
+
+            })
+        }
 
         /*
         if(ActivityCompat.checkSelfPermission(this.applicationContext, android.Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED){​​​​​
